@@ -1,0 +1,18 @@
+Source: sm
+Section: games
+Priority: optional
+Maintainer: Joachim Breitner <nomeata@debian.org>
+Build-Depends: debhelper (>= 4.0.0), pkg-config, libpango1.0-dev, libgtk2.0-dev
+Standards-Version: 3.7.2
+
+Package: sm
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Displays a short text fullscreen
+ Screen Message will display a given multi-line message as large as
+ possible, fullscreen and black on white. You can specify the text either
+ when launching sm, or edit it while the program is running.
+ .
+ It is useful to send messages across a room, e.g. during an university
+ lecture. For fast startup, it is recommended to bind it to a key in your
+ Desktop Environment.
