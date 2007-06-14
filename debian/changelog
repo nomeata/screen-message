@@ -1,4 +1,10 @@
-screen-message (0.4-1) unstable; urgency=low
+screen-message (0.5-1) unstable; urgency=low
+
+  * rename to screen-message, as there ∃ sm in Debian
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 14 Jun 2007 20:21:20 +0100
+
+sm (0.4-1) unstable; urgency=low
 
   * New upstream version (automakized)
   * Switched to cdbs
