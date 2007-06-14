@@ -67,6 +67,7 @@ vbox.pack_start(hbox, expand=False, fill=False)
 window.add(vbox)
 
 font = pango.FontDescription()
+font.set_family("sans-serif")
 font.set_size(60*pango.SCALE)
 layout = draw.create_pango_layout(get_text())
 layout.set_font_description(font)
