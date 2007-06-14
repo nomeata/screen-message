@@ -1,3 +1,17 @@
+sm (0.4-1) unstable; urgency=low
+
+  * New upstream version (automakized)
+  * Switched to cdbs
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 14 Jun 2007 18:07:53 +0100
+
+sm (0.3-1) unstable; urgency=low
+
+  * Get rid of a warning (thx to Jérémy Bobbio <lunar@debian.org>)
+  * Automake the whole thing
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 14 Jun 2007 16:51:22 +0100
+
 sm (0.2-1) unstable; urgency=low
 
   * Version ready for release
