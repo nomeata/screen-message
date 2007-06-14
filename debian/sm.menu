@@ -1,0 +1,2 @@
+?package(sm):needs="X11" section="Apps/Games"\
+  title="sm" command="/usr/bin/sm"
