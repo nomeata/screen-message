@@ -1,4 +1,4 @@
-AC_INIT(sm, 0.3, mail@joachim-breitner.de)
+AC_INIT(sm, 0.4, mail@joachim-breitner.de)
 AC_CONFIG_SRCDIR([sm.c])
 AM_INIT_AUTOMAKE([foreign])
 
