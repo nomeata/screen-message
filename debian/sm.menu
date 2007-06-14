@@ -1,2 +1,2 @@
-?package(sm):needs="X11" section="Apps/Games"\
+?package(sm):needs="X11" section="Games/Toys"\
   title="sm" command="/usr/bin/sm"
