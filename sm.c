@@ -23,34 +23,34 @@
 #include <string.h>
 #include <stdio.h>
 
-int min(int x, int y) {
+static int min(int x, int y) {
 	return x < y ? x : y;
 }
 
 
-gboolean quality = TRUE;
-gboolean need_resize = TRUE;
-gboolean need_quick = TRUE;
+static gboolean quality = TRUE;
+static gboolean need_resize = TRUE;
+static gboolean need_quick = TRUE;
 
-GtkWidget* window;
-GtkWidget* draw;
-GdkCursor *cursor;
-GtkWidget* quit;
-GtkWidget* tv;
-GtkSettings* settings;
-GtkTextBuffer* tb;
-PangoFontDescription *font;
-PangoLayout* layout;
+static GtkWidget* window;
+static GtkWidget* draw;
+static GdkCursor *cursor;
+static GtkWidget* quit;
+static GtkWidget* tv;
+static GtkSettings* settings;
+static GtkTextBuffer* tb;
+static PangoFontDescription *font;
+static PangoLayout* layout;
 
-void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
+static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 	gdk_window_set_cursor(draw->window, cursor);
 }
 
-void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
+static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
 	gtk_text_buffer_set_text(tb,"",-1);
 }
 
-char *get_text() {
+static char *get_text() {
 	GtkTextIter start, end;
 	gtk_text_buffer_get_start_iter(tb,&start);
 	gtk_text_buffer_get_end_iter(tb,&end);
@@ -58,7 +58,7 @@ char *get_text() {
 }
 
 
-void hq(gboolean q, gboolean force){
+static void hq(gboolean q, gboolean force){
 	if (q != quality) 
 		if (q)
 			gtk_settings_set_long_property(settings,"gtk-xft-antialias",1,"Hier halt");
@@ -71,7 +71,7 @@ void hq(gboolean q, gboolean force){
 	quality = q;
 }
 
-void redraw() {
+static void redraw() {
 	const char *text = pango_layout_get_text(layout);
 	if (strlen(text) > 0) {
 		GdkGC *gc = gtk_widget_get_style(draw)->fg_gc[GTK_STATE_NORMAL];
@@ -86,7 +86,7 @@ void redraw() {
 	}
 }
 
-void resize() {
+static void resize() {
 	int w1, h1, w2, h2;
 	pango_layout_get_pixel_size(layout, &w1, &h1);
 	if (w1>0 && h1>0) {
@@ -103,7 +103,7 @@ void resize() {
 }
 
 
-void newtext(char *text) {
+static void newtext(char *text) {
 	pango_layout_set_text(layout, get_text(), -1);
 	resize();
 	hq(FALSE, TRUE);
