@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Joachim Breitner <nomeata@debian.org>
 Build-Depends: debhelper (>= 4.0.0), pkg-config, libpango1.0-dev, libgtk2.0-dev
 Standards-Version: 3.7.2
+XS-VCS-Darcs: http://darcs.nomeata.de/sm
 
 Package: sm
 Architecture: any
