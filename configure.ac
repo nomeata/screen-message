@@ -1,0 +1,16 @@
+AC_INIT(sm, 0.3, mail@joachim-breitner.de)
+AC_CONFIG_SRCDIR([sm.c])
+AM_INIT_AUTOMAKE([foreign])
+
+AC_CONFIG_HEADERS(config.h)
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_STDC_HEADERS
+
+PKG_CHECK_MODULES(DEPS, gtk+-2.0 >= 2.10 gdk-2.0 >= 2.10 pango >= 1.16)
+AC_SUBST(DEPS_CFLAGS)
+AC_SUBST(DEPS_LIBS)
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
