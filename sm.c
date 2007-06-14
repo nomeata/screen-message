@@ -156,6 +156,7 @@ int main(int argc, char **argv) {
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	font = pango_font_description_new();
+        pango_font_description_set_family(font, "sans-serif");
 	pango_font_description_set_size(font, 20*PANGO_SCALE);
 
 	layout=  gtk_widget_create_pango_layout(draw,get_text());
