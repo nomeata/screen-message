@@ -1,4 +1,4 @@
-sm (0.4-1) unstable; urgency=low
+screen-message (0.4-1) unstable; urgency=low
 
   * New upstream version (automakized)
   * Switched to cdbs
