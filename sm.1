@@ -19,7 +19,7 @@
 sm \- Displays a short text fullscreen
 .SH SYNOPSIS
 .B sm
-.RI [ text ]
+.RI [ text | -  ]
 .SH DESCRIPTION
 .BR Screen\ Message 
 will display a given multi-line message as large as
@@ -34,7 +34,8 @@ To quit the program, press Ctrl-Q or press the button.
 .SH OPTIONS
 .TP
 .RI [ text ]
-Text to display at start up. Defaults to ":-)"
+Text to display at start up. Defaults to ":-)". If "-" is passed to sm,
+it will read the text to display from stdin.
 
 .SH AUTHOR
 This manual page was written by Joachim Breitner <nomeata@debian.org>,
