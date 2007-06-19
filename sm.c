@@ -118,14 +118,17 @@ int main(int argc, char **argv) {
 
 	settings = gtk_settings_get_default();
 	GdkColormap *colormap = gtk_widget_get_colormap(GTK_WIDGET(window));
-	GdkColor white;
+	GdkColor white, black;
 	gdk_colormap_alloc_color(colormap, &white, TRUE, TRUE);
 	gdk_color_parse("white", &white);
-	gtk_widget_modify_bg(GTK_WIDGET(window), GTK_STATE_NORMAL, &white);
+	gdk_color_parse("black", &black);
+	gtk_widget_modify_bg(window, GTK_STATE_NORMAL, &white);
+	gtk_widget_modify_fg(window, GTK_STATE_NORMAL, &black);
 
 	draw = gtk_drawing_area_new();
 	gtk_widget_set_size_request(draw,400,400);
 	gtk_widget_modify_bg(draw, GTK_STATE_NORMAL, &white);
+	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
 	g_signal_connect(G_OBJECT(draw), "realize", G_CALLBACK(realize), NULL);
 
 	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
@@ -133,6 +136,8 @@ int main(int argc, char **argv) {
 	cursor = gdk_cursor_new_from_pixmap(pixmap, pixmap, &color, &color, 0, 0);
 
 	tv = gtk_text_view_new();
+	gtk_widget_modify_bg(tv, GTK_STATE_NORMAL, &white);
+	gtk_widget_modify_fg(tv, GTK_STATE_NORMAL, &black);
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
 	
 	if (argc > 1)
@@ -144,6 +149,7 @@ int main(int argc, char **argv) {
 	quit = gtk_button_new_from_stock(GTK_STOCK_QUIT);
 	g_signal_connect(G_OBJECT(quit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
 	gtk_widget_modify_bg(quit, GTK_STATE_NORMAL, &white);
+	gtk_widget_modify_fg(quit, GTK_STATE_NORMAL, &black);
 
 	GtkWidget *hbox = gtk_hbox_new(FALSE,0);
 	gtk_box_pack_start(GTK_BOX(hbox), tv,   TRUE,  TRUE,  0);
