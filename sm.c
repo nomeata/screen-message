@@ -86,6 +86,20 @@ static void redraw() {
 	}
 }
 
+static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
+	if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
+		GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
+
+		gchar *txt = gtk_clipboard_wait_for_text(cb);
+		if (txt != NULL) {
+			gtk_text_buffer_set_text(tb,txt,-1);
+			g_free(txt);
+		}
+
+	}
+	return FALSE;
+}
+
 static void resize() {
 	int w1, h1, w2, h2;
 	pango_layout_get_pixel_size(layout, &w1, &h1);
@@ -127,10 +141,12 @@ int main(int argc, char **argv) {
 	gtk_widget_modify_fg(window, GTK_STATE_NORMAL, &black);
 
 	draw = gtk_drawing_area_new();
+	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK);
 	gtk_widget_set_size_request(draw,400,400);
 	gtk_widget_modify_bg(draw, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
 	g_signal_connect(G_OBJECT(draw), "realize", G_CALLBACK(realize), NULL);
+	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
 
 	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
 	GdkColor color;
