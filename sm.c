@@ -158,8 +158,18 @@ int main(int argc, char **argv) {
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
 	
 	if (argc > 1)
-		//tb.set_text(" ".join(sys.argv[1:]))
-		gtk_text_buffer_set_text(tb, argv[1], -1);
+		if (!strcmp(argv[1], "-") ) {
+			// read from stdin
+			gchar text[1024];
+			int num = fread (text, sizeof(gchar),1024-1, stdin);
+			text[num] = '\0';
+			if (num>0 && text[num-1] == '\n') {
+				text[num-1] = '\0';
+			}
+			gtk_text_buffer_set_text(tb, text, -1);
+		} else {
+			gtk_text_buffer_set_text(tb, argv[1], -1);
+		}
 	else
 		gtk_text_buffer_set_text(tb, ":-)", -1);
 
