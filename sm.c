@@ -115,6 +115,7 @@ int main(int argc, char **argv) {
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gtk_window_fullscreen(GTK_WINDOW(window));
+	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	settings = gtk_settings_get_default();
 	GdkColormap *colormap = gtk_widget_get_colormap(GTK_WIDGET(window));
