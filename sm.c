@@ -124,6 +124,8 @@ static void newtext(char *text) {
 }
 
 int main(int argc, char **argv) {
+	GString *input;
+
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -156,22 +158,35 @@ int main(int argc, char **argv) {
 	gtk_widget_modify_bg(tv, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_fg(tv, GTK_STATE_NORMAL, &black);
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
-	
+
 	if (argc > 1)
 		if (!strcmp(argv[1], "-") ) {
 			// read from stdin
-			gchar text[1024];
-			int num = fread (text, sizeof(gchar),1024-1, stdin);
-			text[num] = '\0';
-			if (num>0 && text[num-1] == '\n') {
-				text[num-1] = '\0';
+			gchar buf[1024];
+			int num;
+
+			input = g_string_new("");
+
+			while ((num = fread (buf, 1, sizeof(buf), stdin)) > 0) {
+				g_string_append_len(input, buf, num);
 			}
-			gtk_text_buffer_set_text(tb, text, -1);
 		} else {
-			gtk_text_buffer_set_text(tb, argv[1], -1);
+			int i;
+
+			input = g_string_new("");
+
+			for (i = 1; i < argc; i++) {
+				g_string_append(input, argv[i]);
+
+				if (i < argc - 1) {
+					g_string_append(input, " ");
+				}
+			}
 		}
 	else
-		gtk_text_buffer_set_text(tb, ":-)", -1);
+		input = g_string_new(":-)");
+
+	gtk_text_buffer_set_text(tb, input->str, input->len);
 
 	quit = gtk_button_new_from_stock(GTK_STOCK_QUIT);
 	g_signal_connect(G_OBJECT(quit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
