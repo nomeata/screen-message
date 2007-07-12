@@ -1,3 +1,11 @@
+screen-message (0.7-1) unstable; urgency=low
+
+  * New upstream version:
+    + Fixes: only first argument is used as the text (Closes: #432806)
+      Thanks to Florian Ragwitz for the patch.
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 12 Jul 2007 07:59:45 +0200
+
 screen-message (0.6-1) unstable; urgency=low
 
   * New upstream release:
