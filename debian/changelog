@@ -3,8 +3,11 @@ screen-message (0.7-1) unstable; urgency=low
   * New upstream version:
     + Fixes: only first argument is used as the text (Closes: #432806)
       Thanks to Florian Ragwitz for the patch.
+    + Sets the size to the size of the screen. This makes fullscren
+      work with xmonad, please tell me if it causes problems with other
+      WMs.
 
- -- Joachim Breitner <nomeata@debian.org>  Thu, 12 Jul 2007 07:59:45 +0200
+ -- Joachim Breitner <nomeata@debian.org>  Sun, 21 Oct 2007 21:19:41 +0200
 
 screen-message (0.6-1) unstable; urgency=low
 
