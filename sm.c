@@ -47,7 +47,10 @@ static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 }
 
 static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
-	gtk_text_buffer_set_text(tb,"",-1);
+	if( gtk_text_buffer_get_char_count(tb) )
+		gtk_text_buffer_set_text(tb,"",-1);
+	else
+		gtk_main_quit();
 }
 
 static char *get_text() {
