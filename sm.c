@@ -232,5 +232,7 @@ int main(int argc, char **argv) {
 	g_signal_connect(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 
+	resize();
+
 	gtk_main();
 }
