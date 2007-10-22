@@ -30,7 +30,6 @@ static int min(int x, int y) {
 
 static gboolean quality = TRUE;
 static gboolean need_resize = TRUE;
-static gboolean need_quick = TRUE;
 
 static GtkWidget* window;
 static GtkWidget* draw;
@@ -235,4 +234,6 @@ int main(int argc, char **argv) {
 	resize();
 
 	gtk_main();
+
+	return 0;
 }
