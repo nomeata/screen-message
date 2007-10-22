@@ -4,8 +4,9 @@ screen-message (0.8-1) UNRELEASED; urgency=low
     + Make the initial text size the same as normal text
     + Pressing Esc when there is no text quits the program
       (Both changes thanks to Paul Wise)
+  * Bump debhelper dependency
 
- -- Joachim Breitner <nomeata@debian.org>  Mon, 22 Oct 2007 15:08:35 +0200
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 22 Oct 2007 15:16:07 +0200
 
 screen-message (0.7-1) unstable; urgency=low
 
