@@ -1,4 +1,4 @@
-screen-message (0.8-1) UNRELEASED; urgency=low
+screen-message (0.8-1) unstable; urgency=low
 
   * New upstream Version
     + Make the initial text size the same as normal text
@@ -6,7 +6,7 @@ screen-message (0.8-1) UNRELEASED; urgency=low
       (Both changes thanks to Paul Wise)
   * Bump debhelper dependency
 
- -- Joachim Breitner <nomeata@debian.org>  Mon, 22 Oct 2007 15:16:07 +0200
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 22 Oct 2007 17:53:30 +0200
 
 screen-message (0.7-1) unstable; urgency=low
 
