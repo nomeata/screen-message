@@ -193,6 +193,9 @@ int main(int argc, char **argv) {
 		input = g_string_new(":-)");
 
 	gtk_text_buffer_set_text(tb, input->str, input->len);
+	GtkTextIter start, end;
+	gtk_text_buffer_get_bounds(tb, &start, &end);
+	gtk_text_buffer_select_range(tb, &start, &end);
 
 	quit = gtk_button_new_from_stock(GTK_STOCK_QUIT);
 	g_signal_connect(G_OBJECT(quit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
