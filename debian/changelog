@@ -1,5 +1,7 @@
-screen-message (0.8-2) UNRELEASED; urgency=low
+screen-message (0.9-1) unstable; urgency=low
 
+  * New upstream Version:
+    - Starts with text selected
   * add XS-Vcs-Browser header
 
  -- Joachim Breitner <nomeata@debian.org>  Wed, 24 Oct 2007 00:53:43 +0200
