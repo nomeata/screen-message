@@ -133,6 +133,8 @@ int main(int argc, char **argv) {
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_window_set_icon_name (GTK_WINDOW (window), "sm");
+
 	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(window));
 	gtk_widget_set_size_request(window, gdk_screen_get_width(screen),
 					    gdk_screen_get_height(screen));
