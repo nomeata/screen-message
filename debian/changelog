@@ -1,3 +1,9 @@
+screen-message (0.10-1) UNRELEASED; urgency=low
+
+  * New upstream version
+
+ -- Joachim Breitner <nomeata@debian.org>  Wed, 19 Mar 2008 23:57:13 +0100
+
 screen-message (0.9-1) unstable; urgency=low
 
   * New upstream Version:
