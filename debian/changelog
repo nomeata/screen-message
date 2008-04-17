@@ -1,3 +1,11 @@
+screen-message (0.11-1) unstable; urgency=low
+
+  * New upstream version
+   + Manpage in section 6 (Closes: 476600 )
+   + Binary moved in "upstream" source
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 17 Apr 2008 23:39:57 +0200
+
 screen-message (0.10-1) unstable; urgency=low
 
   * New upstream version
