@@ -1,8 +1,10 @@
 
-bin_PROGRAMS = sm
 sm_SOURCES = sm.c
 sm_CFLAGS = $(DEPS_CFLAGS)
 sm_LDADD = $(DEPS_LIBS)
+
+execgamesdir= $(prefix)/games
+execgames_PROGRAMS=sm
 
 icondir = $(datadir)/icons/hicolor/48x48/apps
 icon_DATA = sm.png
@@ -21,5 +23,5 @@ update-icon-cache:
 	fi
 
 
-man_MANS = sm.1
-EXTRA_DIST = sm.1 sm.py sm.png
+man_MANS = sm.6
+EXTRA_DIST = sm.6 sm.py sm.png
