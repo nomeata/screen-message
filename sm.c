@@ -48,6 +48,7 @@ static PangoFontDescription *font;
 static PangoLayout* layout;
 static char *foreground = NULL;
 static char *background = NULL;
+static char *fontdesc = NULL;
 
 static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 	gdk_window_set_cursor(draw->window, cursor);
@@ -139,11 +140,12 @@ static struct option const long_options[] =
 	{"version",    no_argument,       NULL, 'V'},
 	{"foreground", required_argument, NULL, 'f'},
 	{"background", required_argument, NULL, 'b'},
+	{"font",       required_argument, NULL, 'n'},
 	{0,0,0,0}
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=330033] [-b|--background=ccffcc]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-n|--font=fontdesc]\n", cmd);
 }
 
 static void version() {
@@ -172,6 +174,10 @@ int main(int argc, char **argv) {
 
 			case 'b':
 				background = optarg;
+				break;
+
+			case 'n':
+				fontdesc = optarg;
 				break;
 
 			default:
@@ -279,7 +285,11 @@ int main(int argc, char **argv) {
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
 	font = pango_font_description_new();
-        pango_font_description_set_family(font, "sans-serif");
+	if (fontdesc != NULL) {
+		pango_font_description_set_family(font, fontdesc);
+	} else {
+		pango_font_description_set_family(font, "sans-serif");
+	}
 	pango_font_description_set_size(font, 20*PANGO_SCALE);
 
 	layout=  gtk_widget_create_pango_layout(draw,get_text());
