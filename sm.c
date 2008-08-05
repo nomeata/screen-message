@@ -22,6 +22,12 @@
 #include <pango/pango.h>
 #include <string.h>
 #include <stdio.h>
+#include "config.h"
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE                             /* for getopt_long */
+#endif
+#include <getopt.h>
 
 static int min(int x, int y) {
 	return x < y ? x : y;
@@ -40,6 +46,8 @@ static GtkSettings* settings;
 static GtkTextBuffer* tb;
 static PangoFontDescription *font;
 static PangoLayout* layout;
+static char *foreground = NULL;
+static char *background = NULL;
 
 static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 	gdk_window_set_cursor(draw->window, cursor);
@@ -125,8 +133,55 @@ static void newtext(char *text) {
 	hq(FALSE, TRUE);
 }
 
+static struct option const long_options[] =
+{
+	{"help",       no_argument,       NULL, 'h'},
+	{"version",    no_argument,       NULL, 'V'},
+	{"foreground", required_argument, NULL, 'f'},
+	{"background", required_argument, NULL, 'b'},
+	{0,0,0,0}
+};
+
+static void usage(char *cmd) {
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=330033] [-b|--background=ccffcc]\n", cmd);
+}
+
+static void version() {
+	printf("%s\n", PACKAGE_STRING);
+}
+
 int main(int argc, char **argv) {
 	GString *input;
+	int c;
+
+	while ((c = getopt_long (argc, argv, "hVf:b:n:", long_options, (int *) 0)) != EOF) {
+		switch (c) {
+			case 'h':
+				usage(argv[0]);
+				return 0;
+				break;
+
+			case 'V':
+				version();
+				return 0;
+				break;
+
+			case 'f':
+				foreground = optarg;
+				break;
+
+			case 'b':
+				background = optarg;
+				break;
+
+			default:
+				/* unknown switch received - at least
+				 * give usage but continue and use the
+				 * data */
+				usage(argv[0]);
+				break;
+		}
+	}
 
 	gtk_init(&argc, &argv);
 
@@ -145,8 +200,17 @@ int main(int argc, char **argv) {
 	GdkColormap *colormap = gtk_widget_get_colormap(GTK_WIDGET(window));
 	GdkColor white, black;
 	gdk_colormap_alloc_color(colormap, &white, TRUE, TRUE);
-	gdk_color_parse("white", &white);
-	gdk_color_parse("black", &black);
+	gdk_colormap_alloc_color(colormap, &black, TRUE, TRUE);
+	if (foreground != NULL) {
+		gdk_color_parse(foreground, &black);
+	} else {
+		gdk_color_parse("black", &black);
+	}
+	if (background != NULL) {
+		gdk_color_parse(background, &white);
+	} else {
+		gdk_color_parse("white", &white);
+	}
 	gtk_widget_modify_bg(window, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_fg(window, GTK_STATE_NORMAL, &black);
 
@@ -167,8 +231,8 @@ int main(int argc, char **argv) {
 	gtk_widget_modify_fg(tv, GTK_STATE_NORMAL, &black);
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
 
-	if (argc > 1)
-		if (!strcmp(argv[1], "-") ) {
+	if (argc > optind)
+		if (!strcmp(argv[optind], "-") ) {
 			// read from stdin
 			gchar buf[1024];
 			int num;
@@ -183,7 +247,7 @@ int main(int argc, char **argv) {
 
 			input = g_string_new("");
 
-			for (i = 1; i < argc; i++) {
+			for (i = optind; i < argc; i++) {
 				g_string_append(input, argv[i]);
 
 				if (i < argc - 1) {
