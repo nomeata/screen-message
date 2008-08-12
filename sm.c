@@ -190,6 +190,7 @@ static void version() {
 int main(int argc, char **argv) {
 	GString *input;
 	int c;
+	int input_provided = 0;
 
 	while ((c = getopt_long (argc, argv, "hVf:b:n:r:", long_options, (int *) 0)) != EOF) {
 		switch (c) {
@@ -286,6 +287,7 @@ int main(int argc, char **argv) {
 			if ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
 				g_string_truncate(input, input->len - 1);
 			}
+			input_provided++;
 		} else {
 			int i;
 
@@ -298,6 +300,7 @@ int main(int argc, char **argv) {
 					g_string_append(input, " ");
 				}
 			}
+			input_provided++;
 		}
 	else
 		input = g_string_new(":-)");
@@ -350,7 +353,10 @@ int main(int argc, char **argv) {
 	g_signal_connect_after(G_OBJECT(window), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 
-	show_entry();
+	if (!input_provided)
+		show_entry();
+	else
+		hide_entry(NULL);
 
 	gtk_main();
 
