@@ -38,7 +38,6 @@ static gboolean need_resize = TRUE;
 
 static GtkWidget* window;
 static GdkScreen *screen;
-static GtkWidget* draw;
 static GdkCursor *cursor;
 static GtkWidget* quit;
 static GtkWidget* tv;
@@ -52,7 +51,7 @@ static char *fontdesc = NULL;
 static rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 
 static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
-	gdk_window_set_cursor(draw->window, cursor);
+	gdk_window_set_cursor(GTK_WIDGET(window)->window, cursor);
 }
 
 static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
@@ -77,7 +76,7 @@ static void hq(gboolean q, gboolean force){
 			gtk_settings_set_long_property(settings,"gtk-xft-antialias",0,"Hier halt");
 	else
 		if (force)
-			gtk_widget_queue_draw(draw);
+			gtk_widget_queue_draw(window);
 
 	quality = q;
 }
@@ -85,12 +84,12 @@ static void hq(gboolean q, gboolean force){
 static void redraw() {
 	const char *text = pango_layout_get_text(layout);
 	if (strlen(text) > 0) {
-		GdkGC *gc = gtk_widget_get_style(draw)->fg_gc[GTK_STATE_NORMAL];
+		GdkGC *gc = gtk_widget_get_style(window)->fg_gc[GTK_STATE_NORMAL];
 		int w1, h1;
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
-			int w2 = draw->allocation.width;
-			int h2 = draw->allocation.height;
+			int w2 = window->allocation.width;
+			int h2 = window->allocation.height;
 
 			int rw1, rh1;
 			if (rotation == 0 || rotation == 2) {
@@ -119,7 +118,7 @@ static void redraw() {
 			pango_context_set_matrix (context, &matrix);
 			pango_layout_context_changed (layout);
 
-			gdk_draw_layout(draw->window, gc,
+			gdk_draw_layout(window->window, gc,
 				(w2-(s*rw1))/2, (h2-(s*rh1))/2,layout);
 			hq(TRUE, FALSE);
 		}
@@ -127,6 +126,7 @@ static void redraw() {
 }
 
 static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
+	printf("Hi\n");
 	if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
 		GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
 
@@ -234,13 +234,9 @@ int main(int argc, char **argv) {
 	gtk_widget_modify_bg(window, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_fg(window, GTK_STATE_NORMAL, &black);
 
-	draw = gtk_drawing_area_new();
-	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK);
-	gtk_widget_set_size_request(draw,400,400);
-	gtk_widget_modify_bg(draw, GTK_STATE_NORMAL, &white);
-	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
-	g_signal_connect(G_OBJECT(draw), "realize", G_CALLBACK(realize), NULL);
-	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
+	gtk_widget_set_events(window, GDK_BUTTON_PRESS_MASK);
+	g_signal_connect(G_OBJECT(window), "realize", G_CALLBACK(realize), NULL);
+	g_signal_connect(G_OBJECT(window), "button-press-event", G_CALLBACK(text_clicked), NULL);
 
 	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
 	GdkColor color;
@@ -288,13 +284,15 @@ int main(int argc, char **argv) {
 	gtk_widget_modify_bg(quit, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_fg(quit, GTK_STATE_NORMAL, &black);
 
+	GtkWidget *vbox_button = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox_button), quit, FALSE, FALSE, 0);
+
 	GtkWidget *hbox = gtk_hbox_new(FALSE,0);
 	gtk_box_pack_start(GTK_BOX(hbox), tv,   TRUE,  TRUE,  0);
-	gtk_box_pack_start(GTK_BOX(hbox), quit, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox_button, FALSE, FALSE, 0);
 
 	GtkWidget *vbox = gtk_vbox_new(FALSE,0);
-	gtk_box_pack_start(GTK_BOX(vbox), draw, TRUE,  TRUE,  0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 
@@ -306,7 +304,7 @@ int main(int argc, char **argv) {
 	}
 	pango_font_description_set_size(font, 200*PANGO_SCALE);
 
-	layout=  gtk_widget_create_pango_layout(draw,get_text());
+	layout = gtk_widget_create_pango_layout(window,get_text());
 	pango_layout_set_font_description(layout, font);
 	pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 
@@ -320,7 +318,7 @@ int main(int argc, char **argv) {
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 	gtk_widget_show_all(window);
 
-	g_signal_connect(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
+	g_signal_connect_after(G_OBJECT(window), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 
 	gtk_main();
