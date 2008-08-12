@@ -1,3 +1,13 @@
+screen-message (0.13-1) unstable; urgency=low
+
+  * New upstream release
+    + Floats and auto-hides text entry
+    + Ignore trailing newlines on stdin (Closes: 494771), thanks
+      to Chris Lamb for the patch.
+  * Bump standards version, no change
+
+ -- Joachim Breitner <nomeata@debian.org>  Tue, 12 Aug 2008 01:35:39 -0300
+
 screen-message (0.12-1) unstable; urgency=low
 
   * New upstream release
