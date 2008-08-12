@@ -33,14 +33,18 @@
 
 #define min(x,y) ((x) < (y) ? (x) : (y))
 
+#define AUTOHIDE_TIMEOUT 5
+
 static gboolean quality = TRUE;
 static gboolean need_resize = TRUE;
 
+static int timeout_id=0;
+
 static GtkWidget* window;
-static GdkScreen *screen;
 static GdkCursor *cursor;
 static GtkWidget* quit;
 static GtkWidget* tv;
+static GtkWidget* entry_widget;
 static GtkSettings* settings;
 static GtkTextBuffer* tb;
 static PangoFontDescription *font;
@@ -50,15 +54,33 @@ static char *background = NULL;
 static char *fontdesc = NULL;
 static rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 
+gboolean hide_entry(gpointer *user_data) {
+	gtk_widget_hide(entry_widget);
+	gtk_widget_grab_focus(tv);
+	return FALSE;
+}
+
+static void show_entry() {
+	if (timeout_id) {
+		g_source_remove(timeout_id);
+		timeout_id = 0;
+	}
+	gtk_widget_show(entry_widget);
+
+	timeout_id = g_timeout_add_seconds (AUTOHIDE_TIMEOUT, (GSourceFunc)hide_entry, NULL);
+}
+
 static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 	gdk_window_set_cursor(GTK_WIDGET(window)->window, cursor);
 }
 
 static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
-	if( gtk_text_buffer_get_char_count(tb) )
+	if( gtk_text_buffer_get_char_count(tb) ) {
 		gtk_text_buffer_set_text(tb,"",-1);
-	else
+		show_entry();
+	} else {
 		gtk_main_quit();
+	}
 }
 
 static char *get_text() {
@@ -126,7 +148,7 @@ static void redraw() {
 }
 
 static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
-	printf("Hi\n");
+	show_entry();
 	if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
 		GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
 
@@ -141,6 +163,7 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 }
 
 static void newtext(char *text) {
+	show_entry();
 	pango_layout_set_text(layout, get_text(), -1);
 	hq(FALSE, TRUE);
 }
@@ -210,7 +233,7 @@ int main(int argc, char **argv) {
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_window_set_icon_name (GTK_WINDOW (window), "sm");
 
-	screen = gtk_window_get_screen(GTK_WINDOW(window));
+	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(window));
 	gtk_widget_set_size_request(window, gdk_screen_get_width(screen),
 					    gdk_screen_get_height(screen));
 	gtk_window_fullscreen(GTK_WINDOW(window));
@@ -288,6 +311,7 @@ int main(int argc, char **argv) {
 	gtk_box_pack_end(GTK_BOX(vbox_button), quit, FALSE, FALSE, 0);
 
 	GtkWidget *hbox = gtk_hbox_new(FALSE,0);
+	entry_widget = hbox;
 	gtk_box_pack_start(GTK_BOX(hbox), tv,   TRUE,  TRUE,  0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox_button, FALSE, FALSE, 0);
 
@@ -320,6 +344,8 @@ int main(int argc, char **argv) {
 
 	g_signal_connect_after(G_OBJECT(window), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
+
+	show_entry();
 
 	gtk_main();
 
