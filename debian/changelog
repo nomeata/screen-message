@@ -1,4 +1,4 @@
-screen-message (0.12-1~debconf8) UNRELEASED; urgency=low
+screen-message (0.12-1) unstable; urgency=low
 
   * New upstream release
     + --foreground, --background, --font, thx to Rhonda
