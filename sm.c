@@ -281,6 +281,11 @@ int main(int argc, char **argv) {
 			while ((num = fread (buf, 1, sizeof(buf), stdin)) > 0) {
 				g_string_append_len(input, buf, num);
 			}
+
+			// remove trailing newline, if any
+			if ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
+				g_string_truncate(input, input->len - 1);
+			}
 		} else {
 			int i;
 
