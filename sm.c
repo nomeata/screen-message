@@ -22,6 +22,8 @@
 #include <pango/pango.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
+
 #include "config.h"
 
 #ifndef _GNU_SOURCE
@@ -29,15 +31,13 @@
 #endif
 #include <getopt.h>
 
-static int min(int x, int y) {
-	return x < y ? x : y;
-}
-
+#define min(x,y) ((x) < (y) ? (x) : (y))
 
 static gboolean quality = TRUE;
 static gboolean need_resize = TRUE;
 
 static GtkWidget* window;
+static GdkScreen *screen;
 static GtkWidget* draw;
 static GdkCursor *cursor;
 static GtkWidget* quit;
@@ -49,6 +49,7 @@ static PangoLayout* layout;
 static char *foreground = NULL;
 static char *background = NULL;
 static char *fontdesc = NULL;
+static rotation = 1; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 
 static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 	gdk_window_set_cursor(draw->window, cursor);
@@ -67,7 +68,6 @@ static char *get_text() {
 	gtk_text_buffer_get_end_iter(tb,&end);
 	return gtk_text_buffer_get_text(tb, &start, &end, FALSE);
 }
-
 
 static void hq(gboolean q, gboolean force){
 	if (q != quality) 
@@ -91,7 +91,34 @@ static void redraw() {
 		if (w1>0 && h1>0) {
 			int w2 = draw->allocation.width;
 			int h2 = draw->allocation.height;
-			gdk_draw_layout(draw->window, gc, (w2-w1)/2,(h2-h1)/2,layout);
+
+			double s;
+			if (rotation == 0 || rotation == 2)
+				s = min ((double)w2/w1, (double)h2/h1);
+			else
+				s = min ((double)w2/h1, (double)h2/w1);
+			
+
+			PangoMatrix matrix = PANGO_MATRIX_INIT;
+
+
+			pango_matrix_translate(&matrix, w2/2, h2/2);
+			pango_matrix_scale(&matrix, s, s);
+			pango_matrix_rotate (&matrix, rotation * 90);
+			pango_matrix_translate(&matrix, -w1/2, -h1/2);
+			PangoContext *context =   pango_layout_get_context(layout);
+			pango_context_set_matrix (context, &matrix);
+			pango_layout_context_changed (layout);
+
+			
+			PangoRenderer *renderer = gdk_pango_renderer_get_default(screen);
+			gdk_pango_renderer_set_drawable(GDK_PANGO_RENDERER(renderer),
+							draw->window);
+			gdk_pango_renderer_set_gc(GDK_PANGO_RENDERER(renderer),
+							gc);
+
+			printf("%i %i %i %i\n", w1, h1, w2, h2);
+			pango_renderer_draw_layout (renderer, layout, 0, 0);
 			hq(TRUE, FALSE);
 		}
 	}
@@ -112,7 +139,12 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 }
 
 static void resize() {
+	need_resize = FALSE;
+	return;
+
 	int w1, h1, w2, h2;
+
+
 	pango_layout_get_pixel_size(layout, &w1, &h1);
 	if (w1>0 && h1>0) {
 		w2 = draw->allocation.width;
@@ -196,7 +228,7 @@ int main(int argc, char **argv) {
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_window_set_icon_name (GTK_WINDOW (window), "sm");
 
-	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(window));
+	screen = gtk_window_get_screen(GTK_WINDOW(window));
 	gtk_widget_set_size_request(window, gdk_screen_get_width(screen),
 					    gdk_screen_get_height(screen));
 	gtk_window_fullscreen(GTK_WINDOW(window));
@@ -290,7 +322,7 @@ int main(int argc, char **argv) {
 	} else {
 		pango_font_description_set_family(font, "sans-serif");
 	}
-	pango_font_description_set_size(font, 20*PANGO_SCALE);
+	pango_font_description_set_size(font, 200*PANGO_SCALE);
 
 	layout=  gtk_widget_create_pango_layout(draw,get_text());
 	pango_layout_set_font_description(layout, font);
