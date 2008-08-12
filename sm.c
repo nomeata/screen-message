@@ -49,7 +49,7 @@ static PangoLayout* layout;
 static char *foreground = NULL;
 static char *background = NULL;
 static char *fontdesc = NULL;
-static rotation = 1; // 0 = normal, 1 = left, 2 = inverted, 3 = right
+static rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 
 static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
 	gdk_window_set_cursor(draw->window, cursor);
@@ -92,33 +92,35 @@ static void redraw() {
 			int w2 = draw->allocation.width;
 			int h2 = draw->allocation.height;
 
-			double s;
-			if (rotation == 0 || rotation == 2)
-				s = min ((double)w2/w1, (double)h2/h1);
-			else
-				s = min ((double)w2/h1, (double)h2/w1);
+			int rw1, rh1;
+			if (rotation == 0 || rotation == 2) {
+				rw1 = w1;
+				rh1 = h1;
+			} else {
+				rw1 = h1;
+				rh1 = w1;
+			}
+
+			double s = min ((double)w2/rw1, (double)h2/rh1);
 			
 
 			PangoMatrix matrix = PANGO_MATRIX_INIT;
-
-
+			// Move matrix to the screen center
 			pango_matrix_translate(&matrix, w2/2, h2/2);
+			// Scale as required
 			pango_matrix_scale(&matrix, s, s);
+			// Rotate if needed
 			pango_matrix_rotate (&matrix, rotation * 90);
-			pango_matrix_translate(&matrix, -w1/2, -h1/2);
-			PangoContext *context =   pango_layout_get_context(layout);
+			// Move matrix so that text will be centered
+			//pango_matrix_translate(&matrix, -w1/2, -h1/2);
+			
+			// Apply matrix
+			PangoContext *context =  pango_layout_get_context(layout);
 			pango_context_set_matrix (context, &matrix);
 			pango_layout_context_changed (layout);
 
-			
-			PangoRenderer *renderer = gdk_pango_renderer_get_default(screen);
-			gdk_pango_renderer_set_drawable(GDK_PANGO_RENDERER(renderer),
-							draw->window);
-			gdk_pango_renderer_set_gc(GDK_PANGO_RENDERER(renderer),
-							gc);
-
-			printf("%i %i %i %i\n", w1, h1, w2, h2);
-			pango_renderer_draw_layout (renderer, layout, 0, 0);
+			gdk_draw_layout(draw->window, gc,
+				(w2-(s*rw1))/2, (h2-(s*rh1))/2,layout);
 			hq(TRUE, FALSE);
 		}
 	}
@@ -138,31 +140,8 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 	return FALSE;
 }
 
-static void resize() {
-	need_resize = FALSE;
-	return;
-
-	int w1, h1, w2, h2;
-
-
-	pango_layout_get_pixel_size(layout, &w1, &h1);
-	if (w1>0 && h1>0) {
-		w2 = draw->allocation.width;
-		h2 = draw->allocation.height;
-		int s = pango_font_description_get_size(font);
-		s = min ((s*w2/w1), (s*h2/h1));
-		pango_font_description_set_size(font,s);
-		pango_layout_set_font_description(layout, font);
-		need_resize = FALSE;
-	}
-	else
-		need_resize = TRUE;
-}
-
-
 static void newtext(char *text) {
 	pango_layout_set_text(layout, get_text(), -1);
-	resize();
 	hq(FALSE, TRUE);
 }
 
@@ -173,11 +152,12 @@ static struct option const long_options[] =
 	{"foreground", required_argument, NULL, 'f'},
 	{"background", required_argument, NULL, 'b'},
 	{"font",       required_argument, NULL, 'n'},
+	{"rotate",     required_argument, NULL, 'r'},
 	{0,0,0,0}
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-n|--font=fontdesc]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3]\n", cmd);
 }
 
 static void version() {
@@ -188,7 +168,7 @@ int main(int argc, char **argv) {
 	GString *input;
 	int c;
 
-	while ((c = getopt_long (argc, argv, "hVf:b:n:", long_options, (int *) 0)) != EOF) {
+	while ((c = getopt_long (argc, argv, "hVf:b:n:r:", long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'h':
 				usage(argv[0]);
@@ -211,7 +191,9 @@ int main(int argc, char **argv) {
 			case 'n':
 				fontdesc = optarg;
 				break;
-
+			case 'r':
+				rotation = atoi(optarg);
+				break;
 			default:
 				/* unknown switch received - at least
 				 * give usage but continue and use the
@@ -338,11 +320,8 @@ int main(int argc, char **argv) {
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 	gtk_widget_show_all(window);
 
-	g_signal_connect(G_OBJECT(draw), "configure-event", G_CALLBACK(resize), NULL);
 	g_signal_connect(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
-
-	resize();
 
 	gtk_main();
 
