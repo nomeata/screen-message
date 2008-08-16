@@ -1,9 +1,10 @@
-screen-message (0.13-2) UNRELEASED; urgency=low
+screen-message (0.14-1) unstable; urgency=low
 
   * New upstream release
     + Only show entry from start on when nothing is provided
+    + Redraw screen on screen configuration changes
 
- -- Joachim Breitner <nomeata@debian.org>  Tue, 12 Aug 2008 02:01:50 -0300
+ -- Joachim Breitner <nomeata@debian.org>  Sat, 16 Aug 2008 16:07:25 -0300
 
 screen-message (0.13-1) unstable; urgency=low
 
