@@ -162,7 +162,7 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 	return FALSE;
 }
 
-static void newtext(char *text) {
+static void newtext() {
 	show_entry();
 	pango_layout_set_text(layout, get_text(), -1);
 	hq(FALSE, TRUE);
@@ -351,6 +351,7 @@ int main(int argc, char **argv) {
 	gtk_widget_show_all(window);
 
 	g_signal_connect_after(G_OBJECT(window), "expose-event", G_CALLBACK(redraw), NULL);
+	g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(newtext), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 
 	if (!input_provided)
