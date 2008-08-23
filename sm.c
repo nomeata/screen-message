@@ -41,6 +41,7 @@ static gboolean need_resize = TRUE;
 static int timeout_id=0;
 
 static GtkWidget* window;
+static GtkWidget* draw;
 static GdkCursor *cursor;
 static GtkWidget* quit;
 static GtkWidget* tv;
@@ -57,6 +58,8 @@ static rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 gboolean hide_entry(gpointer *user_data) {
 	gtk_widget_hide(entry_widget);
 	gtk_widget_grab_focus(tv);
+	gtk_widget_queue_draw(draw);
+	gdk_window_set_cursor(GTK_WIDGET(draw)->window, cursor);
 	return FALSE;
 }
 
@@ -66,12 +69,9 @@ static void show_entry() {
 		timeout_id = 0;
 	}
 	gtk_widget_show(entry_widget);
+	gdk_window_set_cursor(GTK_WIDGET(draw)->window, NULL);
 
 	timeout_id = g_timeout_add_seconds (AUTOHIDE_TIMEOUT, (GSourceFunc)hide_entry, NULL);
-}
-
-static void realize(GtkWindow *window, GdkScreen *screen, gpointer data) {
-	gdk_window_set_cursor(GTK_WIDGET(window)->window, cursor);
 }
 
 static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
@@ -98,7 +98,7 @@ static void hq(gboolean q, gboolean force){
 			gtk_settings_set_long_property(settings,"gtk-xft-antialias",0,"Hier halt");
 	else
 		if (force)
-			gtk_widget_queue_draw(window);
+			gtk_widget_queue_draw(draw);
 
 	quality = q;
 }
@@ -106,7 +106,7 @@ static void hq(gboolean q, gboolean force){
 static void redraw() {
 	const char *text = pango_layout_get_text(layout);
 	if (strlen(text) > 0) {
-		GdkGC *gc = gtk_widget_get_style(window)->fg_gc[GTK_STATE_NORMAL];
+		GdkGC *gc = gtk_widget_get_style(draw)->fg_gc[GTK_STATE_NORMAL];
 		int w1, h1;
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
@@ -140,7 +140,7 @@ static void redraw() {
 			pango_context_set_matrix (context, &matrix);
 			pango_layout_context_changed (layout);
 
-			gdk_draw_layout(window->window, gc,
+			gdk_draw_layout(draw->window, gc,
 				(w2-(s*rw1))/2, (h2-(s*rh1))/2,layout);
 			hq(TRUE, FALSE);
 		}
@@ -255,20 +255,19 @@ int main(int argc, char **argv) {
 	} else {
 		gdk_color_parse("white", &white);
 	}
-	gtk_widget_modify_bg(window, GTK_STATE_NORMAL, &white);
-	gtk_widget_modify_fg(window, GTK_STATE_NORMAL, &black);
 
-	gtk_widget_set_events(window, GDK_BUTTON_PRESS_MASK);
-	g_signal_connect(G_OBJECT(window), "realize", G_CALLBACK(realize), NULL);
-	g_signal_connect(G_OBJECT(window), "button-press-event", G_CALLBACK(text_clicked), NULL);
+	draw = gtk_drawing_area_new();
+	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK);
+	gtk_widget_set_size_request(draw,400,400);
+	gtk_widget_modify_bg(draw, GTK_STATE_NORMAL, &white);
+	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
+	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
 
 	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
 	GdkColor color;
 	cursor = gdk_cursor_new_from_pixmap(pixmap, pixmap, &color, &color, 0, 0);
 
 	tv = gtk_text_view_new();
-	gtk_widget_modify_bg(tv, GTK_STATE_NORMAL, &white);
-	gtk_widget_modify_fg(tv, GTK_STATE_NORMAL, &black);
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
 
 	if (argc > optind)
@@ -312,8 +311,6 @@ int main(int argc, char **argv) {
 
 	quit = gtk_button_new_from_stock(GTK_STOCK_QUIT);
 	g_signal_connect(G_OBJECT(quit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
-	gtk_widget_modify_bg(quit, GTK_STATE_NORMAL, &white);
-	gtk_widget_modify_fg(quit, GTK_STATE_NORMAL, &black);
 
 	GtkWidget *vbox_button = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbox_button), quit, FALSE, FALSE, 0);
@@ -324,6 +321,7 @@ int main(int argc, char **argv) {
 	gtk_box_pack_start(GTK_BOX(hbox), vbox_button, FALSE, FALSE, 0);
 
 	GtkWidget *vbox = gtk_vbox_new(FALSE,0);
+	gtk_box_pack_start(GTK_BOX(vbox), draw, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -350,8 +348,7 @@ int main(int argc, char **argv) {
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 	gtk_widget_show_all(window);
 
-	g_signal_connect_after(G_OBJECT(window), "expose-event", G_CALLBACK(redraw), NULL);
-	g_signal_connect(G_OBJECT(window), "configure-event", G_CALLBACK(newtext), NULL);
+	g_signal_connect_after(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 
 	if (!input_provided)
