@@ -1,3 +1,11 @@
+screen-message (0.15-1) unstable; urgency=low
+
+  * New upstream release
+    + Back to using a GtkDraw for the text, behaves better with matchbox
+    + Show mouse pointer while entry is visible
+
+ -- Joachim Breitner <nomeata@debian.org>  Sat, 23 Aug 2008 23:50:10 +0200
+
 screen-message (0.14-1) unstable; urgency=low
 
   * New upstream release
