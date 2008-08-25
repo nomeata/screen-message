@@ -168,6 +168,14 @@ static void newtext() {
 	hq(FALSE, TRUE);
 }
 
+static void mark_deleted(GtkTextBuffer* tb, GtkTextMark* m, gpointer d){
+	show_entry();
+}
+
+static void mark_set(GtkTextBuffer* tb, GtkTextIter* l, GtkTextMark* m, gpointer d){
+	show_entry();
+}
+
 static struct option const long_options[] =
 {
 	{"help",       no_argument,       NULL, 'h'},
@@ -350,6 +358,8 @@ int main(int argc, char **argv) {
 
 	g_signal_connect_after(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
+	g_signal_connect(G_OBJECT(tb), "mark-set", G_CALLBACK(mark_set), NULL);
+	g_signal_connect(G_OBJECT(tb), "mark-deleted", G_CALLBACK(mark_deleted), NULL);
 
 	if (!input_provided)
 		show_entry();
