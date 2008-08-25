@@ -33,7 +33,7 @@
 
 #define min(x,y) ((x) < (y) ? (x) : (y))
 
-#define AUTOHIDE_TIMEOUT 5
+#define AUTOHIDE_TIMEOUT 3
 
 static gboolean quality = TRUE;
 static gboolean need_resize = TRUE;
