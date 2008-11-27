@@ -142,6 +142,12 @@ static void redraw() {
 
 			gdk_draw_layout(draw->window, gc,
 				(w2-(s*rw1))/2, (h2-(s*rh1))/2,layout);
+			
+			// Reset matrix
+			PangoMatrix matrix2 = PANGO_MATRIX_INIT;
+			pango_context_set_matrix (context, &matrix2);
+			pango_layout_context_changed (layout);
+
 			hq(TRUE, FALSE);
 		}
 	}
