@@ -1,3 +1,12 @@
+screen-message (0.16-1) unstable; urgency=low
+
+  * New upstream release
+    + 3 second timeout, react on cursor movements (Closes: #496467), thanks to
+      Paul Wise for the patch.
+    + Avoid flicker when toggling the entry.
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 27 Nov 2008 14:37:00 +0100
+
 screen-message (0.15-1) unstable; urgency=low
 
   * New upstream release
