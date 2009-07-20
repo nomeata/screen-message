@@ -3,13 +3,13 @@ Section: games
 Priority: optional
 Maintainer: Joachim Breitner <nomeata@debian.org>
 Build-Depends: debhelper (>= 5.0.51~), cdbs, pkg-config, libpango1.0-dev, libgtk2.0-dev, imagemagick
-Standards-Version: 3.8.0
+Standards-Version: 3.8.2
 Vcs-Darcs: http://darcs.nomeata.de/screen-message
 Vcs-Browser: http://darcs.nomeata.de/cgi-bin/darcsweb.cgi?r=screen-message;a=summary
 
 Package: sm
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Displays a short text fullscreen
  Screen Message will display a given multi-line message as large as
  possible, fullscreen and black on white. You can specify the text either

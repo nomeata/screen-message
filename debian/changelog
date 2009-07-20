@@ -1,3 +1,11 @@
+screen-message (0.17-1) unstable; urgency=low
+
+  * New upstream release
+    + Properly hide entry when no data is provided
+  * Bump standards version, no change
+
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 20 Jul 2009 23:44:46 +0200
+
 screen-message (0.16-1) unstable; urgency=low
 
   * New upstream release
