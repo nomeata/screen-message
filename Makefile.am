@@ -10,7 +10,7 @@ desktopdir = $(datadir)/applications
 dist_desktop_DATA = sm.desktop
 
 icondir = $(datadir)/icons/hicolor/48x48/apps
-icon_DATA = sm.png
+dist_icon_DATA = sm.png
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 
@@ -26,5 +26,5 @@ update-icon-cache:
 	fi
 
 
-man_MANS = sm.6
-EXTRA_DIST = sm.6 sm.py sm.png
+dist_man_MANS = sm.6
+EXTRA_DIST = sm.py
