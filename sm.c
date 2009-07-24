@@ -57,7 +57,7 @@ static rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 
 gboolean hide_entry(gpointer *user_data) {
 	gtk_widget_hide(entry_widget);
-	gtk_widget_grab_focus(tv);
+	gtk_widget_grab_focus(draw);
 	gtk_widget_queue_draw(draw);
 	gdk_window_set_cursor(GTK_WIDGET(draw)->window, cursor);
 	return FALSE;
@@ -69,6 +69,7 @@ static void show_entry() {
 		timeout_id = 0;
 	}
 	gtk_widget_show(entry_widget);
+	gtk_widget_grab_focus(tv);
 	gdk_window_set_cursor(GTK_WIDGET(draw)->window, NULL);
 
 	timeout_id = g_timeout_add_seconds (AUTOHIDE_TIMEOUT, (GSourceFunc)hide_entry, NULL);
@@ -151,6 +152,14 @@ static void redraw() {
 			hq(TRUE, FALSE);
 		}
 	}
+}
+
+static gboolean text_keypress(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
+	// forward signal to the text view
+	gboolean ret;
+	g_signal_emit_by_name(tv, "key-press-event", event, &ret);
+	gtk_widget_grab_focus(tv);
+	return ret;
 }
 
 static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
@@ -267,11 +276,13 @@ int main(int argc, char **argv) {
 	}
 
 	draw = gtk_drawing_area_new();
-	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK);
+	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK|GDK_KEY_PRESS_MASK);
 	gtk_widget_set_size_request(draw,400,400);
 	gtk_widget_modify_bg(draw, GTK_STATE_NORMAL, &white);
 	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
 	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
+	g_signal_connect(G_OBJECT(draw), "key-press-event", G_CALLBACK(text_keypress), NULL);
+	g_object_set(draw,"can-focus",1);
 
 	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
 	GdkColor color;
