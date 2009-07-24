@@ -1,3 +1,12 @@
+screen-message (0.18-1) UNRELEASED; urgency=low
+
+  * New upstream release
+    + Does not focus the hidden text input, avoiding unwanted pop-ups of
+      a possible virtual keyboard.
+    + Ship .desktop file
+
+ -- Joachim Breitner <nomeata@debian.org>  Fri, 24 Jul 2009 12:24:10 +0200
+
 screen-message (0.17-1) unstable; urgency=low
 
   * New upstream release
