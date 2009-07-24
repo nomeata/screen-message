@@ -6,8 +6,11 @@ sm_LDADD = $(DEPS_LIBS)
 execgamesdir= $(prefix)/games
 execgames_PROGRAMS=sm
 
+sm.desktop: sm.desktop.in
+	sed -e s%@BINPATH@%${execgamesdir}% <$< >$@
+
 desktopdir = $(datadir)/applications
-dist_desktop_DATA = sm.desktop
+desktop_DATA = sm.desktop
 
 icondir = $(datadir)/icons/hicolor/48x48/apps
 dist_icon_DATA = sm.png
@@ -27,4 +30,5 @@ update-icon-cache:
 
 
 dist_man_MANS = sm.6
-EXTRA_DIST = sm.py
+EXTRA_DIST = sm.py sm.desktop.in
+CLEANFILES = sm.desktop
