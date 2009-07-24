@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Screen-Message
+Comment=Displays a short text fullscreen
+Exec=sm
+Icon=sm
+Terminal=false
+Type=Application
+Categories=GTK;Application;Utility;

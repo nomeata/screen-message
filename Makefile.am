@@ -6,6 +6,9 @@ sm_LDADD = $(DEPS_LIBS)
 execgamesdir= $(prefix)/games
 execgames_PROGRAMS=sm
 
+desktopdir = $(datadir)/applications
+dist_desktop_DATA = sm.desktop
+
 icondir = $(datadir)/icons/hicolor/48x48/apps
 icon_DATA = sm.png
 
