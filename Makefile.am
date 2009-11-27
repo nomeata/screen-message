@@ -30,5 +30,5 @@ update-icon-cache:
 
 
 dist_man_MANS = sm.6
-EXTRA_DIST = sm.py sm.desktop.in
+EXTRA_DIST = sm.py sm.desktop.in sm.html
 CLEANFILES = sm.desktop
