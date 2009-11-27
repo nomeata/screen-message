@@ -1,0 +1,114 @@
+<html>
+<style type="text/css">
+#textarea {
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	white-space:nowrap;
+	font-family: sans;
+	padding:0px;
+	margin:0px;
+	border:0px;
+	text-align:center;
+	overflow:hidden;
+}
+
+#test {
+	position:absolute;
+	visibility:hidden;
+	top:0px;
+	left:0px;
+	font-size:30px;
+	white-space:pre;
+	font-family: sans;
+	border:0px;
+	padding:0.1em;
+	margin:0px;
+}
+#about {
+	position:absolute;
+	width:20em;
+	top:30px;
+	right:30px;
+	background-color:gray;
+	padding:1em;
+}
+
+</style>
+<script type="text/javascript">
+opacity = 100;
+function adjust() {
+	ta = document.getElementById("textarea");
+	test = document.getElementById("test");
+	body = document.getElementById("test");
+	
+	test.innerHTML=ta.value;
+	// Otherwise, the newline would not be counted.
+	if (ta.value[ta.value.length-1] == "\n") {
+		test.innerHTML += '.';
+	}
+
+	ratioX = (window.innerWidth) / test.offsetWidth;
+	ratioY = (window.innerHeight) / test.offsetHeight;
+	ratio = Math.min(ratioX,ratioY);
+	fontSize = Math.floor(30 * ratio) + "px"
+	ta.style.fontSize = fontSize;
+	newHeight = Math.ceil(test.offsetHeight * ratio);
+	//ta.style.height = newHeight + "px";
+	//ta.style.top = Math.floor((window.innerHeight - newHeight)/2) + "px";
+	ta.style.paddingTop = Math.floor((window.innerHeight - newHeight)/2) + "px";
+	ta.style.paddingBottom = Math.floor((window.innerHeight - newHeight)/2) + "px";
+	newWidth = Math.ceil(test.offsetWidth * ratio);
+	//ta.style.width = newWidth + "px";
+	ta.style.paddingLeft = Math.floor((window.innerWidth - newWidth)/2) + "px";
+	ta.style.paddingRight = Math.floor((window.innerWidth - newWidth)/2) + "px";
+	 
+	//test.innerHTML = newHeight + " " + window.innerHeight + " " + fontSize;
+}
+
+function showBox() {
+	opacity = 100;
+	window.clearTimeout(timeout);
+	setOpacity();
+}
+function fadeOut() {
+	opacity *= 0.985;
+	if (opacity > 1) {
+		timeout = window.setTimeout("fadeOut()",20);
+	} else {
+		opacity = 0;
+	}
+	setOpacity();
+}
+function setOpacity() {
+	about = document.getElementById("about");
+	about.style.opacity = opacity/100;
+	about.style.filter = "alpha(opacity="+Math.round(opacity)+")";
+}
+function init() {
+	ta = document.getElementById("textarea");
+	ta.focus();
+	adjust();
+	timeout = window.setTimeout("fadeOut();",1000);
+	setOpacity();
+	
+}
+</script>
+<body onload="init()">
+<textarea id="textarea" onKeyUp="adjust()">:-)</textarea>
+<span id="test"></span>
+<div id="about" onMouseOver="showBox()" onMouseOut="fadeOut()">
+<p>
+This is an online-version of the program <strong>screen-message</strong> for Linux.
+</p>
+<p>
+For more information about the original program, see what <a href="http://debaday.debian.net/2007/07/18/screen-message-use-your-screen-to-communicate/">Deb-a-Day</a> writes about it. You can download it from <a href="http://packages.debian/org/sid/sm">Debian</a> or <a href="http://darcs.nomeata.de/screen-message.upstream/">fetch the sourcecode</a>.
+</p>
+<p>
+<strong>screen-messages</strong> was created by <a href="http://www.joachim-breitner.de/">Joachim Breitner</a>.
+</p>
+</div>
+</body>
+</html>
