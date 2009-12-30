@@ -34,10 +34,14 @@ CLEANFILES = sm.desktop
 
 if WIN32
 AM_LDFLAGS = -Wl,--subsystem,windows
+sm_LDADD += sm-icon.o
 
 INSTALLER_BASE = screen-message-setup-@PACKAGE_VERSION@
 INSTALLER = $(INSTALLER_BASE).exe
 CLEANFILES +=  setup.iss $(INSTALLER)
+
+sm-icon.o: sm.rc
+	$(WINDRES) $< $@
 
 $(INSTALLER): setup.iss sm.exe README.Win32
 	"$(WINE)" "$(ISCC)" /O. "/F$(INSTALLER_BASE)" $< 
