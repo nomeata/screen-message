@@ -28,7 +28,20 @@ update-icon-cache:
 	        echo "***   $(gtk_update_icon_cache)"; \
 	fi
 
-
 dist_man_MANS = sm.6
 EXTRA_DIST = sm.py sm.desktop.in sm.html
-CLEANFILES = sm.desktop
+CLEANFILES = sm.desktop 
+
+if WIN32
+INSTALLER_BASE = screen-message-setup-@PACKAGE_VERSION@
+INSTALLER = $(INSTALLER_BASE).exe
+CLEANFILES += setup-app-ver-name.iss 
+setup-app-ver-name.iss:
+	echo "AppVerName=Screen Message @PACKAGE_VERSION@" > $@
+
+$(INSTALLER): setup.iss sm.exe setup-app-ver-name.iss
+	"$(WINE)" "$(ISCC)" /O. /F$(INSTALLER_BASE) $< 
+
+installer: $(INSTALLER)
+
+endif
