@@ -33,6 +33,8 @@ EXTRA_DIST = sm.py sm.desktop.in sm.html README.Win32
 CLEANFILES = sm.desktop 
 
 if WIN32
+AM_LDFLAGS = -Wl,--subsystem,windows
+
 INSTALLER_BASE = screen-message-setup-@PACKAGE_VERSION@
 INSTALLER = $(INSTALLER_BASE).exe
 CLEANFILES +=  setup.iss $(INSTALLER)
