@@ -11,6 +11,7 @@ AM_CONDITIONAL(WIN32, test "x$win32" = xtrue)
 AS_IF([test "x$win32" = xtrue],[
         AC_CHECK_TOOL(WINE,[wine],[],[])
         AC_CHECK_TOOL(WINEPATH,[winepath],[],[])
+        AC_CHECK_TOOL(WINDRES,[windres],[],[])
 	])
 
 AC_ARG_WITH([iscc],
