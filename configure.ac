@@ -1,12 +1,17 @@
 AC_INIT(screen-message, 0.18, mail@joachim-breitner.de)
 AC_CONFIG_SRCDIR([sm.c])
 AM_INIT_AUTOMAKE([foreign])
+AC_CONFIG_FILES([setup.iss])
 
 AS_CASE($host,
 	[*mingw32msvc*],[win32=true],
 	[win32=false])
 
 AM_CONDITIONAL(WIN32, test "x$win32" = xtrue)
+AS_IF([test "x$win32" = xtrue],[
+        AC_CHECK_TOOL(WINE,[wine],[],[])
+        AC_CHECK_TOOL(WINEPATH,[winepath],[],[])
+	])
 
 AC_ARG_WITH([iscc],
             [AS_HELP_STRING([--with-issc=PATH],
@@ -16,7 +21,6 @@ AC_ARG_WITH([iscc],
 
 AS_IF([test "x$with_iscc" != xno],
 	    [
-	    AC_CHECK_TOOL(WINE,[wine],[],[])
 	    AC_SUBST(ISCC,[$with_iscc])
 	    ],
 	    [
@@ -34,7 +38,8 @@ AC_ARG_WITH([win32-gtk],
             [with_win32_gtk=no])
 
 AS_IF([test "x$with_win32_gtk" != xno],
-            [AS_VAR_APPEND(PKG_CONFIG," --define-variable prefix=$with_win32_gtk")
+	    [AC_SUBST(WIN32_GTK, [`$WINEPATH -w $with_win32_gtk`])
+	     AS_VAR_APPEND(PKG_CONFIG," --define-variable prefix=$with_win32_gtk")
 	     export PKG_CONFIG_PATH="$with_win32_gtk/lib/pkgconfig:$PKG_CONFIG_PATH"
 	    ],
 	    [

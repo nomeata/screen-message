@@ -35,12 +35,10 @@ CLEANFILES = sm.desktop
 if WIN32
 INSTALLER_BASE = screen-message-setup-@PACKAGE_VERSION@
 INSTALLER = $(INSTALLER_BASE).exe
-CLEANFILES += setup-app-ver-name.iss 
-setup-app-ver-name.iss:
-	echo "AppVerName=Screen Message @PACKAGE_VERSION@" > $@
+CLEANFILES +=  setup.iss $(INSTALLER)
 
-$(INSTALLER): setup.iss sm.exe setup-app-ver-name.iss
-	"$(WINE)" "$(ISCC)" /O. /F$(INSTALLER_BASE) $< 
+$(INSTALLER): setup.iss sm.exe 
+	"$(WINE)" "$(ISCC)" /O. "/F$(INSTALLER_BASE)" $< 
 
 installer: $(INSTALLER)
 
