@@ -1,7 +1,7 @@
 AC_INIT(screen-message, 0.18, mail@joachim-breitner.de)
 AC_CONFIG_SRCDIR([sm.c])
 AM_INIT_AUTOMAKE([foreign])
-AC_CONFIG_FILES([setup.iss])
+AC_CONFIG_FILES([setup.iss README.Win32])
 
 AS_CASE($host,
 	[*mingw32msvc*],[win32=true],
