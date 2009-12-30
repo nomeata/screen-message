@@ -29,7 +29,7 @@ update-icon-cache:
 	fi
 
 dist_man_MANS = sm.6
-EXTRA_DIST = sm.py sm.desktop.in sm.html
+EXTRA_DIST = sm.py sm.desktop.in sm.html README.Win32
 CLEANFILES = sm.desktop 
 
 if WIN32
@@ -37,7 +37,7 @@ INSTALLER_BASE = screen-message-setup-@PACKAGE_VERSION@
 INSTALLER = $(INSTALLER_BASE).exe
 CLEANFILES +=  setup.iss $(INSTALLER)
 
-$(INSTALLER): setup.iss sm.exe 
+$(INSTALLER): setup.iss sm.exe README.Win32
 	"$(WINE)" "$(ISCC)" /O. "/F$(INSTALLER_BASE)" $< 
 
 installer: $(INSTALLER)
