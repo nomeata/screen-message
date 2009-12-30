@@ -8,6 +8,24 @@ AS_CASE($host,
 
 AM_CONDITIONAL(WIN32, test "x$win32" = xtrue)
 
+AC_ARG_WITH([iscc],
+            [AS_HELP_STRING([--with-issc=PATH],
+              [path to the Inno Setup compiler for win32 cross builds])],
+            [ ],
+            [with_iscc=no])
+
+AS_IF([test "x$with_iscc" != xno],
+	    [
+	    AC_CHECK_TOOL(WINE,[wine],[],[])
+	    AC_SUBST(ISCC,[$with_iscc])
+	    ],
+	    [
+	    AS_IF([test "x$win32" = xtrue],
+	    	[AC_MSG_ERROR("You need to specify --with-iscc when building for Win32")]
+	   	)
+	    ])
+
+
 PKG_PROG_PKG_CONFIG
 AC_ARG_WITH([win32-gtk],
             [AS_HELP_STRING([--with-win32-gtk=PATH],
