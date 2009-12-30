@@ -2,6 +2,12 @@ AC_INIT(screen-message, 0.18, mail@joachim-breitner.de)
 AC_CONFIG_SRCDIR([sm.c])
 AM_INIT_AUTOMAKE([foreign])
 
+AS_CASE($host,
+	[*mingw32msvc*],[win32=true],
+	[win32=false])
+
+AM_CONDITIONAL(WIN32, test "x$win32" = xtrue)
+
 PKG_PROG_PKG_CONFIG
 AC_ARG_WITH([win32-gtk],
             [AS_HELP_STRING([--with-win32-gtk=PATH],
@@ -14,10 +20,11 @@ AS_IF([test "x$with_win32_gtk" != xno],
 	     export PKG_CONFIG_PATH="$with_win32_gtk/lib/pkgconfig:$PKG_CONFIG_PATH"
 	    ],
 	    [
-	    AS_CASE($host,[*mingw32msvc*],[
-	    	AC_MSG_ERROR("You need to specify --with-win32-gtk when building for Win32")
-	   	])
+	    AS_IF([test "x$win32" = xtrue],
+	    	[AC_MSG_ERROR("You need to specify --with-win32-gtk when building for Win32")]
+	   	)
 	    ])
+
 
 AC_CONFIG_HEADERS(config.h)
 
