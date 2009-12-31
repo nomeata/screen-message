@@ -20,5 +20,11 @@ Third party components
 
 This program uses and ships the following components from Free Software projects. You can find the source code at the respective websites:
 
- * TODO
+ * GTK+, ATK, Pango, GLib: http://www.gtk.org/
+ * Cairo: http://cairographics.org/
+ * Expat: http://expat.sourceforge.net/
+ * Fontconfig: http://www.fontconfig.org/
+ * Freetype2: http://www.freetype.org/
+ * libpng: http://www.libpng.org/pub/png/libpng.html
+ * zlib: http://www.zlib.net/
 
