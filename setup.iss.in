@@ -48,7 +48,7 @@ Source: "@WIN32_GTK@\bin\libatk*.dll"; DestDir: "{app}\bin"
 [Icons]
 Name: "{group}\Screen Message"; Filename: "{app}\bin\sm.exe"; Tasks: not hotkey
 Name: "{group}\Screen Message"; Filename: "{app}\bin\sm.exe"; Hotkey: "ctrl+alt+s"; Tasks: hotkey
-Name: "{group}\{cm:UninstallProgram,arbtt}"; Filename: "{uninstallexe}"
+Name: "{group}\{cm:UninstallProgram,Screen Message}"; Filename: "{uninstallexe}"
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Screen Message"; Filename: "{app}\bin\sm.exe"; Tasks: quicklaunch
 
 
