@@ -28,3 +28,5 @@ This program uses and ships the following components from Free Software projects
  * libpng: http://www.libpng.org/pub/png/libpng.html
  * zlib: http://www.zlib.net/
 
+This installer was created using Inno Setup: http://www.jrsoftware.org/isinfo.php
+
