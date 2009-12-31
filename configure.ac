@@ -20,6 +20,10 @@ AC_ARG_WITH([iscc],
             [ ],
             [with_iscc=no])
 
+AS_IF([test "x$with_iscc" = xyes],[
+	AC_MSG_ERROR("You need to pass a parameter to --with-iscc")
+	])
+
 AS_IF([test "x$with_iscc" != xno],
 	    [
 	    AC_SUBST(ISCC,[$with_iscc])
@@ -37,6 +41,10 @@ AC_ARG_WITH([win32-gtk],
               [path to the gtk+ source bundle for win32 cross builds])],
             [],
             [with_win32_gtk=no])
+
+AS_IF([test "x$with_win32_gtk" = xyes],[
+	AC_MSG_ERROR("You need to pass a parameter to --with-win32_-gtk")
+	])
 
 AS_IF([test "x$with_win32_gtk" != xno],
 	    [AC_SUBST(WIN32_GTK, [`$WINEPATH -w $with_win32_gtk`])
