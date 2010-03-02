@@ -326,6 +326,7 @@ int main(int argc, char **argv) {
 		input = g_string_new(":-)");
 
 	gtk_text_buffer_set_text(tb, input->str, input->len);
+	g_string_free(input, TRUE);
 	GtkTextIter start, end;
 	gtk_text_buffer_get_bounds(tb, &start, &end);
 	gtk_text_buffer_select_range(tb, &start, &end);
