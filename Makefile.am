@@ -29,7 +29,7 @@ update-icon-cache:
 	fi
 
 dist_man_MANS = sm.6
-EXTRA_DIST = sm.py sm.desktop.in sm.html README.Win32
+EXTRA_DIST = sm.py sm.desktop.in sm.html README.Win32 sm.ico sm.rc
 CLEANFILES = sm.desktop 
 
 if WIN32
