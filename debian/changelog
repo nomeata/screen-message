@@ -1,6 +1,7 @@
 screen-message (0.19-1) UNRELEASED; urgency=low
 
   * New upstream release 
+    + Fixes SIGSEGV by not using g_object_set (Closes: #581337)
 
  -- Joachim Breitner <nomeata@debian.org>  Mon, 17 May 2010 18:04:39 +0200
 
