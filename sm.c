@@ -282,7 +282,7 @@ int main(int argc, char **argv) {
 	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
 	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
 	g_signal_connect(G_OBJECT(draw), "key-press-event", G_CALLBACK(text_keypress), NULL);
-	g_object_set(draw,"can-focus",1);
+	gtk_widget_set_can_focus(draw, TRUE);
 
 	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
 	GdkColor color;
