@@ -65,6 +65,10 @@ function adjust() {
 	ta.style.paddingRight = Math.max(0,Math.floor((window.innerWidth - newWidth)/2)) + "px";
 	 
 	//test.innerHTML = newHeight + " " + window.innerHeight + " " + fontSize;
+	
+	link = document.getElementById("permlink");
+	href = window.location.href.replace(/\#.*/,"");
+	link.href = href + "#t=" + encodeURIComponent(ta.value);
 }
 
 function showBox() {
@@ -86,9 +90,19 @@ function setOpacity() {
 	about.style.opacity = opacity/100;
 	about.style.filter = "alpha(opacity="+Math.round(opacity)+")";
 }
+
 function init() {
 	ta = document.getElementById("textarea");
 	ta.focus();
+
+	var queryString = {};
+	window.location.href.replace(
+		new RegExp("([^?=&;#]+)(=([^&;]*))", "g"),
+		function($0, $1, $2, $3) {queryString[$1] = decodeURIComponent($3); }
+	);
+	if (queryString['t']) {
+		ta.value = queryString['t'];
+	}
 	adjust();
 	timeout = window.setTimeout("fadeOut();",1000);
 	setOpacity();
@@ -107,6 +121,9 @@ For more information about the original program, see what <a href="http://debada
 </p>
 <p>
 <strong>screen-message</strong> was created by <a href="http://www.joachim-breitner.de/">Joachim Breitner</a>.
+</p>
+<p>
+Use <a id="permlink">this link</a> to share your current text.
 </p>
 </div>
 </body>
