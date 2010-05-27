@@ -61,8 +61,8 @@ function adjust() {
 	ta.style.paddingBottom = Math.floor((window.innerHeight - newHeight)/2) + "px";
 	newWidth = Math.ceil(test.offsetWidth * ratio);
 	//ta.style.width = newWidth + "px";
-	ta.style.paddingLeft = Math.floor((window.innerWidth - newWidth)/2) + "px";
-	ta.style.paddingRight = Math.floor((window.innerWidth - newWidth)/2) + "px";
+	ta.style.paddingLeft = Math.max(0,Math.floor((window.innerWidth - newWidth)/2)) + "px";
+	ta.style.paddingRight = Math.max(0,Math.floor((window.innerWidth - newWidth)/2)) + "px";
 	 
 	//test.innerHTML = newHeight + " " + window.innerHeight + " " + fontSize;
 }
