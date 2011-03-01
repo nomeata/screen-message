@@ -66,9 +66,7 @@ function adjust() {
 	 
 	//test.innerHTML = newHeight + " " + window.innerHeight + " " + fontSize;
 	
-	link = document.getElementById("permlink");
-	href = window.location.href.replace(/\#.*/,"");
-	link.href = href + "#t=" + encodeURIComponent(ta.value);
+	href = window.location.hash = "#t=" + encodeURIComponent(ta.value);
 }
 
 function showBox() {
@@ -121,9 +119,6 @@ For more information about the original program, see what <a href="http://debada
 </p>
 <p>
 <strong>screen-message</strong> was created by <a href="http://www.joachim-breitner.de/">Joachim Breitner</a>.
-</p>
-<p>
-Use <a id="permlink">this link</a> to share your current text.
 </p>
 </div>
 </body>
