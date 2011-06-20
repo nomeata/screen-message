@@ -1,6 +1,6 @@
 /*
-#     vlshow.c
-#     Copyright (C) 2006 Joachim Breitner
+#     sm.c
+#     Copyright (C) 2006 - 2010 Joachim Breitner
 #
 #     The Code for making a window fullscreen was taken from src/fullscreen.c in
 #     the geeqie package:
