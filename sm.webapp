@@ -3,7 +3,7 @@
   "description": "Shows a message, as large as possible and nothing else",
   "launch_path": "/",
   "icons": {
-    "48": "/sm.png"
+    "48": "/sm.png",
     "128": "/sm-128.png"
   },
   "developer": {
