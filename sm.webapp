@@ -4,10 +4,11 @@
   "launch_path": "/",
   "icons": {
     "48": "/sm.png"
+    "128": "/sm-128.png"
   },
   "developer": {
     "name": "Joachim Breitner",
-    "url": "mail@joachim-breitner.de"
+    "url": "http://www.joachim-breitner.de/"
   },
   "default_locale": "en",
   "fullscreen": "true"
