@@ -1,0 +1,14 @@
+{
+  "name": "Screen-Message",
+  "description": "Shows a message, as large as possible and nothing else",
+  "launch_path": "/",
+  "icons": {
+    "48": "/sm.png"
+  },
+  "developer": {
+    "name": "Joachim Breitner",
+    "url": "mail@joachim-breitner.de"
+  },
+  "default_locale": "en",
+  "fullscreen": "true"
+}
