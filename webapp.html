@@ -1,0 +1,146 @@
+<html>
+<!--
+#     sm.html
+#     Copyright (C) 2006 - 2010 Joachim Breitner
+#
+#     This program is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation; either version 2 of the License, or
+#     (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program; if not, write to the Free Software
+#     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+-->
+<style type="text/css">
+#textarea {
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	white-space:nowrap;
+	font-family: sans;
+	padding:0px;
+	margin:0px;
+	border:0px;
+	text-align:center;
+	overflow:hidden;
+}
+
+#test {
+	position:absolute;
+	visibility:hidden;
+	top:0px;
+	left:0px;
+	font-size:30px;
+	white-space:pre;
+	font-family: sans;
+	border:0px;
+	padding:0.1em;
+	margin:0px;
+}
+a {
+	text-decoration:none;
+	color:black;
+}
+
+#focusdummy {
+	position:absolute;
+	width:100%;
+	top:0px;
+	left:0px;
+	background-color:aqua;
+}
+#focusdummy td {
+	font-family: sans;
+	font-size:20px;
+	opacity:.5;
+	padding:4px;
+}
+
+</style>
+<script type="text/javascript">
+opacity = 100;
+timeout = null;
+function adjust() {
+	ta = document.getElementById("textarea");
+	test = document.getElementById("test");
+	
+	test.innerHTML=ta.value;
+	// Otherwise, the newline would not be counted.
+	if (ta.value[ta.value.length-1] == "\n") {
+		test.innerHTML += '.';
+	}
+
+	ratioX = (window.innerWidth) / test.offsetWidth;
+	ratioY = (window.innerHeight) / test.offsetHeight;
+	ratio = Math.min(ratioX,ratioY);
+	fontSize = Math.floor(30 * ratio) + "px"
+	ta.style.fontSize = fontSize;
+	newHeight = Math.ceil(test.offsetHeight * ratio);
+	//ta.style.height = newHeight + "px";
+	//ta.style.top = Math.floor((window.innerHeight - newHeight)/2) + "px";
+	ta.style.paddingTop = Math.floor((window.innerHeight - newHeight)/2) + "px";
+	ta.style.paddingBottom = Math.floor((window.innerHeight - newHeight)/2) + "px";
+	newWidth = Math.ceil(test.offsetWidth * ratio);
+	//ta.style.width = newWidth + "px";
+	ta.style.paddingLeft = Math.max(0,Math.floor((window.innerWidth - newWidth)/2)) + "px";
+	ta.style.paddingRight = Math.max(0,Math.floor((window.innerWidth - newWidth)/2)) + "px";
+	 
+	//test.innerHTML = newHeight + " " + window.innerHeight + " " + fontSize;
+	
+	href = window.location.hash = "#t=" + encodeURIComponent(ta.value);
+}
+
+function init() {
+	ta = document.getElementById("textarea");
+	ta.focus();
+
+	var queryString = {};
+	window.location.href.replace(
+		new RegExp("([^?=&;#]+)(=([^&;]*))", "g"),
+		function($0, $1, $2, $3) {queryString[$1] = decodeURIComponent($3); }
+	);
+	if (queryString['t']) {
+		ta.value = queryString['t'];
+	}
+	adjust();
+}
+function showFocusDummy() {
+	window.clearTimeout(timeout);
+	document.getElementById("focusdummy").style.display = "block";
+}
+function hideFocusDummy() {
+	timeout = window.setTimeout(function () {
+		document.getElementById("focusdummy").style.display = "none";
+	}, 100);
+}
+function clearText() {
+	ta = document.getElementById("textarea");
+	ta.value = '';
+	ta.focus();
+}
+
+</script>
+<body onload="init()" onresize="adjust()">
+<textarea id="textarea" onfocus="showFocusDummy()" onblur="hideFocusDummy()" onKeyUp="adjust()" onpaste="adjust()" oninput="adjust()">:-)</textarea>
+<span id="test"></span>
+<div id="focusdummy" >
+<table width="100%">
+<tr><td align="left" width="30%" align="left">
+<a href="http://sm.nomeata.de/" target="blank">screen message<br/>on the web</a>
+</td><td width="40%" align="center">
+<a href="#" onclick="return false">Hide Keyboard</a>
+</td><td width="30%" align="right">
+<a href="#" onclick="clearText(); return false";">Clear Text</a>
+</td></tr>
+</table>
+</div>
+</body>
+</html>
