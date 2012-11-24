@@ -182,6 +182,24 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 	return FALSE;
 }
 
+static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer data){
+	GString *input;
+	gchar *buf;
+	gsize len;
+
+	g_io_channel_read_to_end (chan, &buf, &len, NULL);
+	input = g_string_new_len(buf, len);
+	g_free(buf);
+
+	// remove trailing newlines, if any
+	while ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
+		g_string_truncate(input, input->len - 1);
+	}
+
+	gtk_text_buffer_set_text (tb, input->str, input->len);
+	g_string_free(input, TRUE);
+}
+
 static void newtext() {
 	show_entry();
 	pango_layout_set_text(layout, get_text(), -1);
@@ -318,17 +336,9 @@ int main(int argc, char **argv) {
 		if (!strcmp(argv[optind], "-") ) {
 			// read from stdin
 			GIOChannel *chan = g_io_channel_unix_new(0);
+			g_io_add_watch (chan, G_IO_IN, G_CALLBACK(read_chan), NULL);
 
-			gchar *buf;
-			gsize len;
-			g_io_channel_read_to_end (chan, &buf, &len, NULL);
-			input = g_string_new_len(buf, len);
-			g_free(buf);
-
-			// remove trailing newlines, if any
-			while ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
-				g_string_truncate(input, input->len - 1);
-			}
+			input = g_string_new("");
 			input_provided++;
 		} else {
 			int i;
