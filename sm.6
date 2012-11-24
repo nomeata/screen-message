@@ -19,8 +19,12 @@
 sm \- Displays a short text fullscreen
 .SH SYNOPSIS
 .B sm
-.RI [ OPTIONS ]
-.RI [ text | \- ]
+[ OPTIONS ]
+[
+.I text
+|
+.B \-
+]
 .SH DESCRIPTION
 .BR Screen\ Message 
 will display a given multi-line message as large as
@@ -33,14 +37,14 @@ typing or (left-)click anywhere on the screen.
 .PP
 To clear the displayed text, press Escape.
 .PP
-To quit the program, press Ctrl-Q or press the button.
+To quit the program, press Ctrl-Q, or Escape twice, or click the "Quit"-button.
 .br
 
 .SH OPTIONS
 .TP
-.RI [ text ]
-Text to display at start up. Defaults to ":-)". If "\-" is passed to sm,
-it will read the text to display from the standard input, see REMOTE CONTROLLING SM.
+[ \fItext\fR | \fB\-\fR ]
+Text to display at start up. Defaults to ":-)". If "\fB\-\fR" is passed to sm,
+it will read the text to display from the standard input, see \fBREMOTE CONTROLLING SM\fR.
 .TP
 .BI \-f,\ \-\-foreground= colordesc
 Define a different color to use for the foreground of the text to
@@ -75,12 +79,16 @@ This prints the project name together with its version number
 quits.
 
 .SH REMOTE CONTROLLING SM
-If sm is called with \- as a command line argument, it will read the text to be
+If sm is called with \fB\-\fR as a command line argument, it will read the text to be
 shown from the standard input. It will read the input until it reaches the end
-of the file, or the line feed character \\f, and show the input read so far at
-once. Newline characters at the beginning or the end are ignored.
+of the file, or the line feed character \fB\\f\fR, and show the input read so far at
+once. Newline characters at the beginning or the end are ignored. The input is assumed to be UTF-8 encoded 
+.RB "(see " utf8 (7)).
 .PP
 This can be used to create automatic displays of changing data or similar tricks. For example, the following command will create a simple digital watch:
+.sp
+.B (while sleep 1; do date +%T; echo -e '\\\\f'; done) | sm -
+
 
 .SH AUTHOR
 This manual page was written by Joachim Breitner
