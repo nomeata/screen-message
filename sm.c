@@ -27,6 +27,7 @@
 #include <pango/pango.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "config.h"
@@ -41,7 +42,6 @@
 #define AUTOHIDE_TIMEOUT 3
 
 static gboolean quality = TRUE;
-static gboolean need_resize = TRUE;
 
 static int timeout_id=0;
 
@@ -58,7 +58,7 @@ static PangoLayout* layout;
 static char *foreground = NULL;
 static char *background = NULL;
 static char *fontdesc = NULL;
-static rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
+static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 
 gboolean hide_entry(gpointer *user_data) {
 	gtk_widget_hide(entry_widget);
