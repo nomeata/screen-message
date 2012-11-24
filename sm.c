@@ -59,6 +59,7 @@ static char *foreground = NULL;
 static char *background = NULL;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
+static GString *partial_input;
 
 gboolean hide_entry(gpointer *user_data) {
 	gtk_widget_hide(entry_widget);
@@ -183,21 +184,61 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 }
 
 static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer data){
+	gchar buf[1024];
 	GString *input;
-	gchar *buf;
-	gsize len;
+	GIOStatus stat = G_IO_STATUS_NORMAL;
+	gsize read;
+	GError *err = NULL;
 
-	g_io_channel_read_to_end (chan, &buf, &len, NULL);
-	input = g_string_new_len(buf, len);
-	g_free(buf);
+	while ((stat = g_io_channel_read_chars(chan, buf, sizeof(buf), &read, &err)) == G_IO_STATUS_NORMAL && err == NULL) {
+		g_string_append_len(partial_input, buf, read);
+	}
 
-	// remove trailing newlines, if any
+	if (err != NULL)
+	{
+	    fprintf (stderr, "Unable to read stdin: %s\n", err->message);
+	    g_error_free (err);
+	    return TRUE;
+	}
+
+
+	if (stat == G_IO_STATUS_EOF) {
+		// There is an end of file, so use the whole input
+		input = g_string_new_len(partial_input->str, partial_input->len);
+		g_string_truncate(partial_input, 0);
+	} else {
+		// There is no end of file. Check for form feed characters.
+		// Use from the second-to-last to the last.
+		char *last_ff = strrchr(partial_input->str, '\f');
+		if (last_ff) {
+			*last_ff = '\0';
+			char *snd_last_ff = strrchr(partial_input->str, '\f');
+			if (snd_last_ff == NULL) snd_last_ff = partial_input->str;
+			input = g_string_new_len(snd_last_ff, last_ff - snd_last_ff);
+			g_string_erase(partial_input, 0, last_ff - partial_input->str + 1);
+		} else {
+			return TRUE;
+		}
+	}
+
+	// remove beginning and trailing newlines, if any
+	gssize cnt = 0;
+	while ((input->len > cnt) && (input->str[cnt] == '\n')) {
+		cnt++;
+	}
+	g_string_erase(input, 0, cnt);
+
 	while ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
 		g_string_truncate(input, input->len - 1);
 	}
 
 	gtk_text_buffer_set_text (tb, input->str, input->len);
 	g_string_free(input, TRUE);
+
+	if (stat == G_IO_STATUS_AGAIN)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 static void newtext() {
@@ -332,11 +373,14 @@ int main(int argc, char **argv) {
 	tv = gtk_text_view_new();
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
 
+	partial_input = g_string_new("");
+
 	if (argc > optind)
 		if (!strcmp(argv[optind], "-") ) {
 			// read from stdin
 			GIOChannel *chan = g_io_channel_unix_new(0);
-			g_io_add_watch (chan, G_IO_IN, G_CALLBACK(read_chan), NULL);
+			g_io_channel_set_flags(chan, G_IO_FLAG_NONBLOCK, NULL);
+			g_io_add_watch (chan, G_IO_IN | G_IO_HUP, &read_chan, NULL);
 
 			input = g_string_new("");
 			input_provided++;
