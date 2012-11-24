@@ -1,6 +1,6 @@
 /*
 #     sm.c
-#     Copyright (C) 2006 - 2010 Joachim Breitner
+#     Copyright (C) 2006 - 2012 Joachim Breitner
 #
 #     The Code for making a window fullscreen was taken from src/fullscreen.c in
 #     the geeqie package:
@@ -317,17 +317,16 @@ int main(int argc, char **argv) {
 	if (argc > optind)
 		if (!strcmp(argv[optind], "-") ) {
 			// read from stdin
-			gchar buf[1024];
-			int num;
+			GIOChannel *chan = g_io_channel_unix_new(0);
 
-			input = g_string_new("");
+			gchar *buf;
+			gsize len;
+			g_io_channel_read_to_end (chan, &buf, &len, NULL);
+			input = g_string_new_len(buf, len);
+			g_free(buf);
 
-			while ((num = fread (buf, 1, sizeof(buf), stdin)) > 0) {
-				g_string_append_len(input, buf, num);
-			}
-
-			// remove trailing newline, if any
-			if ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
+			// remove trailing newlines, if any
+			while ((input->len > 0) && (input->str[input->len - 1] == '\n')) {
 				g_string_truncate(input, input->len - 1);
 			}
 			input_provided++;
