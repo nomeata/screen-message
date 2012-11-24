@@ -60,6 +60,7 @@ static char *background = NULL;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 static GString *partial_input;
+static gulong text_change_handler;
 
 gboolean hide_entry(gpointer *user_data) {
 	gtk_widget_hide(entry_widget);
@@ -232,7 +233,10 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 		g_string_truncate(input, input->len - 1);
 	}
 
+	g_signal_handler_block (tb, text_change_handler);
 	gtk_text_buffer_set_text (tb, input->str, input->len);
+	g_signal_handler_unblock (tb, text_change_handler);
+
 	g_string_free(input, TRUE);
 
 	if (stat == G_IO_STATUS_AGAIN)
@@ -242,9 +246,12 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 }
 
 static void newtext() {
-	show_entry();
 	pango_layout_set_text(layout, get_text(), -1);
 	hq(FALSE, TRUE);
+}
+
+static void newtext_show_input() {
+	show_entry();
 }
 
 static void move_cursor(GtkTextView* tv, GtkMovementStep step, gint count, gboolean extend_selection, gpointer user_data) {
@@ -447,6 +454,7 @@ int main(int argc, char **argv) {
 	gtk_widget_show_all(window);
 
 	g_signal_connect_after(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
+	text_change_handler = g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext_show_input), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 	g_signal_connect(G_OBJECT(tv), "move-cursor", G_CALLBACK(move_cursor), NULL);
 
