@@ -40,7 +40,7 @@ To quit the program, press Ctrl-Q or press the button.
 .TP
 .RI [ text ]
 Text to display at start up. Defaults to ":-)". If "\-" is passed to sm,
-it will read the text to display from stdin.
+it will read the text to display from the standard input, see REMOTE CONTROLLING SM.
 .TP
 .BI \-f,\ \-\-foreground= colordesc
 Define a different color to use for the foreground of the text to
@@ -73,6 +73,14 @@ recognized options and quits.
 .BI \-V,\ \-\-version
 This prints the project name together with its version number
 quits.
+
+.SH REMOTE CONTROLLING SM
+If sm is called with \- as a command line argument, it will read the text to be
+shown from the standard input. It will read the input until it reaches the end
+of the file, or the line feed character \\f, and show the input read so far at
+once. Newline characters at the beginning or the end are ignored.
+.PP
+This can be used to create automatic displays of changing data or similar tricks. For example, the following command will create a simple digital watch:
 
 .SH AUTHOR
 This manual page was written by Joachim Breitner
