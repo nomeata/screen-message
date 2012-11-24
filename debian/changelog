@@ -1,9 +1,9 @@
-screen-message (0.20-1) UNRELEASED; urgency=low
+screen-message (0.20-1) experimental; urgency=low
 
   * Adjust VCS header 
   * New upstream release 
 
- -- Joachim Breitner <nomeata@debian.org>  Sat, 24 Nov 2012 20:27:59 +0100
+ -- Joachim Breitner <nomeata@debian.org>  Sat, 24 Nov 2012 20:28:14 +0100
 
 screen-message (0.19-1) unstable; urgency=low
 
