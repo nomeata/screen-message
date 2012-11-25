@@ -423,15 +423,15 @@ int main(int argc, char **argv) {
 	quit = gtk_button_new_from_stock(GTK_STOCK_QUIT);
 	g_signal_connect(G_OBJECT(quit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
 
-	GtkWidget *vbox_button = gtk_vbox_new(FALSE, 0);
+	GtkWidget *vbox_button = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_end(GTK_BOX(vbox_button), quit, FALSE, FALSE, 0);
 
-	GtkWidget *hbox = gtk_hbox_new(FALSE,0);
+	GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
 	entry_widget = hbox;
 	gtk_box_pack_start(GTK_BOX(hbox), tv,   TRUE,  TRUE,  0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox_button, FALSE, FALSE, 0);
 
-	GtkWidget *vbox = gtk_vbox_new(FALSE,0);
+	GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
 	gtk_box_pack_start(GTK_BOX(vbox), draw, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
