@@ -54,20 +54,20 @@ static GtkWidget* entry_widget;
 static GtkSettings* settings;
 static GtkTextBuffer* tb;
 static PangoFontDescription *font;
-static PangoLayout* layout;
 static char *foreground = NULL;
 static char *background = NULL;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 static int alignment = 0; // 0 = centered, 1 = left-aligned, 2 = right-aligned
 static GString *partial_input;
+static gulong quality_high_handler = 0;
 static gulong text_change_handler;
 
 gboolean hide_entry(gpointer *user_data) {
 	gtk_widget_hide(entry_widget);
 	gtk_widget_grab_focus(draw);
 	gtk_widget_queue_draw(draw);
-	gdk_window_set_cursor(GTK_WIDGET(draw)->window, cursor);
+	gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(draw)), cursor);
 	return FALSE;
 }
 
@@ -78,7 +78,7 @@ static void show_entry() {
 	}
 	gtk_widget_show(entry_widget);
 	gtk_widget_grab_focus(tv);
-	gdk_window_set_cursor(GTK_WIDGET(draw)->window, NULL);
+	gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(draw)), NULL);
 
 	timeout_id = g_timeout_add_seconds (AUTOHIDE_TIMEOUT, (GSourceFunc)hide_entry, NULL);
 }
@@ -100,11 +100,12 @@ static char *get_text() {
 }
 
 static void hq(gboolean q, gboolean force){
-	if (q != quality) 
+	if (q != quality) {
 		if (q)
 			gtk_settings_set_long_property(settings,"gtk-xft-antialias",1,"Hier halt");
 		else
 			gtk_settings_set_long_property(settings,"gtk-xft-antialias",0,"Hier halt");
+	}
 	else
 		if (force)
 			gtk_widget_queue_draw(draw);
@@ -112,15 +113,27 @@ static void hq(gboolean q, gboolean force){
 	quality = q;
 }
 
-static void redraw() {
-	const char *text = pango_layout_get_text(layout);
+static gboolean quality_high (gpointer data) {
+	hq(TRUE, FALSE);
+	return FALSE;
+}
+
+static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
+	int q;
+	const char *text = get_text();
+
 	if (strlen(text) > 0) {
-		GdkGC *gc = gtk_widget_get_style(draw)->fg_gc[GTK_STATE_NORMAL];
 		int w1, h1;
+		static PangoLayout* layout;
+
+		layout = gtk_widget_create_pango_layout(draw, get_text());
+		pango_layout_set_font_description(layout, font);
+		pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
-			int w2 = window->allocation.width;
-			int h2 = window->allocation.height;
+			int w2 = gtk_widget_get_allocated_width(draw);
+			int h2 = gtk_widget_get_allocated_height(draw);
 
 			int rw1, rh1;
 			if (rotation == 0 || rotation == 2) {
@@ -132,33 +145,28 @@ static void redraw() {
 			}
 
 			double s = min ((double)w2/rw1, (double)h2/rh1);
-			
 
-			PangoMatrix matrix = PANGO_MATRIX_INIT;
-			// Move matrix to the screen center
-			pango_matrix_translate(&matrix, w2/2, h2/2);
-			// Scale as required
-			pango_matrix_scale(&matrix, s, s);
-			// Rotate if needed
-			pango_matrix_rotate (&matrix, rotation * 90);
-			// Move matrix so that text will be centered
-			//pango_matrix_translate(&matrix, -w1/2, -h1/2);
-			
-			// Apply matrix
-			PangoContext *context =  pango_layout_get_context(layout);
-			pango_context_set_matrix (context, &matrix);
-			pango_layout_context_changed (layout);
+			cairo_save(cr);
 
-			gdk_draw_layout(draw->window, gc,
-				(w2-(s*rw1))/2, (h2-(s*rh1))/2,layout);
-			
-			// Reset matrix
-			PangoMatrix matrix2 = PANGO_MATRIX_INIT;
-			pango_context_set_matrix (context, &matrix2);
-			pango_layout_context_changed (layout);
+			GdkRGBA color;
+			gtk_style_context_get_color (gtk_widget_get_style_context(draw),
+				GTK_STATE_NORMAL, &color);
+			gdk_cairo_set_source_rgba(cr, &color);
 
-			hq(TRUE, FALSE);
+
+			cairo_translate(cr, w2/2, h2/2);
+			cairo_rotate(cr, rotation * M_PI_2);
+			cairo_scale(cr, s, s);
+			cairo_translate(cr, -w1/2, -h1/2);
+			pango_cairo_show_layout (cr, layout);
+
+			cairo_restore(cr);
+
+			if (quality_high_handler) 
+				g_source_remove(quality_high_handler);
+			quality_high_handler = g_timeout_add(0, quality_high, NULL);
 		}
+		g_object_unref(layout);
 	}
 }
 
@@ -247,7 +255,10 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 }
 
 static void newtext() {
-	pango_layout_set_text(layout, get_text(), -1);
+	if (quality_high_handler) {
+		g_source_remove(quality_high_handler);
+		quality_high_handler = 0;
+	}
 	hq(FALSE, TRUE);
 }
 
@@ -354,33 +365,28 @@ int main(int argc, char **argv) {
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	settings = gtk_settings_get_default();
-	GdkColormap *colormap = gtk_widget_get_colormap(GTK_WIDGET(window));
-	GdkColor white, black;
-	gdk_colormap_alloc_color(colormap, &white, TRUE, TRUE);
-	gdk_colormap_alloc_color(colormap, &black, TRUE, TRUE);
+	GdkRGBA  white, black;
 	if (foreground != NULL) {
-		gdk_color_parse(foreground, &black);
+		gdk_rgba_parse(&black, foreground);
 	} else {
-		gdk_color_parse("black", &black);
+		gdk_rgba_parse(&black, "black");
 	}
 	if (background != NULL) {
-		gdk_color_parse(background, &white);
+		gdk_rgba_parse(&white, background);
 	} else {
-		gdk_color_parse("white", &white);
+		gdk_rgba_parse(&white, "white");
 	}
 
 	draw = gtk_drawing_area_new();
 	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK|GDK_KEY_PRESS_MASK);
 	gtk_widget_set_size_request(draw,400,400);
-	gtk_widget_modify_bg(draw, GTK_STATE_NORMAL, &white);
-	gtk_widget_modify_fg(draw, GTK_STATE_NORMAL, &black);
+	gtk_widget_override_background_color(draw, GTK_STATE_NORMAL, &white);
+	gtk_widget_override_color(draw, GTK_STATE_NORMAL, &black);
 	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
 	g_signal_connect(G_OBJECT(draw), "key-press-event", G_CALLBACK(text_keypress), NULL);
 	gtk_widget_set_can_focus(draw, TRUE);
 
-	GdkPixmap *pixmap = gdk_pixmap_new(NULL, 1, 1, 1);
-	GdkColor color;
-	cursor = gdk_cursor_new_from_pixmap(pixmap, pixmap, &color, &color, 0, 0);
+	cursor = gdk_cursor_new_for_display(gtk_widget_get_display(GTK_WIDGET(draw)), GDK_BLANK_CURSOR);
 
 	tv = gtk_text_view_new();
 	tb = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
@@ -446,22 +452,7 @@ int main(int argc, char **argv) {
 
 	layout = gtk_widget_create_pango_layout(window,get_text());
 	pango_layout_set_font_description(layout, font);
-
-	switch(alignment){
-		case 0: // center
-			pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
-			break;
-		case 1: // left
-			pango_layout_set_alignment(layout,PANGO_ALIGN_LEFT);
-			break;
-		case 2: // left
-			pango_layout_set_alignment(layout,PANGO_ALIGN_RIGHT);
-			break;
-		default:
-			// we propably don't want to annoy the user, so default to
-			// the old default-behaviour:
-			pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
-	}
+	pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 
 	GtkAccelGroup *accel = gtk_accel_group_new();
 	guint key;
@@ -473,7 +464,7 @@ int main(int argc, char **argv) {
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 	gtk_widget_show_all(window);
 
-	g_signal_connect_after(G_OBJECT(draw), "expose-event", G_CALLBACK(redraw), NULL);
+	g_signal_connect_after(G_OBJECT(draw), "draw", G_CALLBACK(redraw), NULL);
 	text_change_handler = g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext_show_input), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 	g_signal_connect(G_OBJECT(tv), "move-cursor", G_CALLBACK(move_cursor), NULL);
