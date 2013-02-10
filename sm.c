@@ -59,6 +59,7 @@ static char *foreground = NULL;
 static char *background = NULL;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
+static int alignment = 0; // 0 = centered, 1 = left-aligned, 2 = right-aligned
 static GString *partial_input;
 static gulong text_change_handler;
 
@@ -266,11 +267,12 @@ static struct option const long_options[] =
 	{"background", required_argument, NULL, 'b'},
 	{"font",       required_argument, NULL, 'n'},
 	{"rotate",     required_argument, NULL, 'r'},
+	{"align",      required_argument, NULL, 'a'},
 	{0,0,0,0}
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
 }
 
 static void version() {
@@ -282,7 +284,7 @@ int main(int argc, char **argv) {
 	int c;
 	int input_provided = 0;
 
-	while ((c = getopt_long (argc, argv, "hVf:b:n:r:", long_options, (int *) 0)) != EOF) {
+	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:", long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'h':
 				usage(argv[0]);
@@ -307,6 +309,9 @@ int main(int argc, char **argv) {
 				break;
 			case 'r':
 				rotation = atoi(optarg);
+				break;
+			case 'a':
+				alignment = atoi(optarg);
 				break;
 			default:
 				/* unknown switch received - at least
@@ -441,7 +446,22 @@ int main(int argc, char **argv) {
 
 	layout = gtk_widget_create_pango_layout(window,get_text());
 	pango_layout_set_font_description(layout, font);
-	pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+
+	switch(alignment){
+		case 0: // center
+			pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+			break;
+		case 1: // left
+			pango_layout_set_alignment(layout,PANGO_ALIGN_LEFT);
+			break;
+		case 2: // left
+			pango_layout_set_alignment(layout,PANGO_ALIGN_RIGHT);
+			break;
+		default:
+			// we propably don't want to annoy the user, so default to
+			// the old default-behaviour:
+			pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+	}
 
 	GtkAccelGroup *accel = gtk_accel_group_new();
 	guint key;
