@@ -128,7 +128,22 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 
 		layout = gtk_widget_create_pango_layout(draw, get_text());
 		pango_layout_set_font_description(layout, font);
-		pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+
+		switch(alignment){
+			case 0: // center
+				pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+				break;
+			case 1: // left
+				pango_layout_set_alignment(layout,PANGO_ALIGN_LEFT);
+				break;
+			case 2: // left
+				pango_layout_set_alignment(layout,PANGO_ALIGN_RIGHT);
+				break;
+			default:
+				// we propably don't want to annoy the user, so default to
+				// the old default-behaviour:
+				pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
+		}
 
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
@@ -449,10 +464,6 @@ int main(int argc, char **argv) {
 		pango_font_description_set_family(font, "sans-serif");
 	}
 	pango_font_description_set_size(font, 200*PANGO_SCALE);
-
-	layout = gtk_widget_create_pango_layout(window,get_text());
-	pango_layout_set_font_description(layout, font);
-	pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 
 	GtkAccelGroup *accel = gtk_accel_group_new();
 	guint key;
