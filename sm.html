@@ -17,6 +17,8 @@
 #     along with this program; if not, write to the Free Software
 #     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 -->
+<head>
+<title>Screen message</title>
 <style type="text/css">
 #textarea {
 	position:absolute;
@@ -128,6 +130,7 @@ function init() {
 	}
 }
 </script>
+</head>
 <body onload="init()" onresize="adjust()">
 <textarea id="textarea" onKeyUp="adjust()" onpaste="adjust()" oninput="adjust()">:-)</textarea>
 <span id="test"></span>
