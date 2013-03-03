@@ -86,7 +86,14 @@ function adjust() {
 	 
 	//test.innerHTML = newHeight + " " + window.innerHeight + " " + fontSize;
 	
-	href = window.location.hash = "#t=" + encodeURIComponent(ta.value);
+	href =  "#t=" + encodeURIComponent(ta.value);
+	if (ta.style.color) {
+		href +=  ";f=" + encodeURIComponent(ta.style.color);
+	}
+	if (ta.style.backgroundColor) {
+		href +=  ";b=" + encodeURIComponent(ta.style.backgroundColor);
+	}
+	window.location.hash = href;
 }
 
 function showBox() {
@@ -109,7 +116,7 @@ function setOpacity() {
 	about.style.filter = "alpha(opacity="+Math.round(opacity)+")";
 }
 
-function init() {
+function parseHash() {
 	ta = document.getElementById("textarea");
 	ta.focus();
 
@@ -121,17 +128,26 @@ function init() {
 	if (queryString['t']) {
 		ta.value = queryString['t'];
 	}
+	if (queryString['f']) {
+		ta.style.color = queryString['f'];
+	}
+	if (queryString['b']) {
+		ta.style.backgroundColor = queryString['b'];
+	}
 	adjust();
 	timeout = window.setTimeout("fadeOut();",1000);
 	setOpacity();
+}
 	
+function init() {
 	if (window.navigator.mozApps) {
 		document.getElementById("firefox").style.display = "block";
 	}
+	parseHash();
 }
 </script>
 </head>
-<body onload="init()" onresize="adjust()">
+<body onload="init()" onhashchange="parseHash()" onresize="adjust()">
 <textarea id="textarea" onKeyUp="adjust()" onpaste="adjust()" oninput="adjust()">:-)</textarea>
 <span id="test"></span>
 <div id="about" onMouseOver="showBox()" onMouseOut="fadeOut()">
