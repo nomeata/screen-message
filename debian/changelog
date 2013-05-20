@@ -1,3 +1,9 @@
+screen-message (0.20-2) UNRELEASED; urgency=low
+
+  * Upload to unstable 
+
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 20 May 2013 12:11:10 +0200
+
 screen-message (0.20-1) experimental; urgency=low
 
   * Adjust VCS header 
