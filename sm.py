@@ -83,6 +83,8 @@ key, mod = gtk.accelerator_parse("Escape")
 accel.connect_group(key, mod, 0, (lambda x,y,z,v: tb.set_text("")))
 window.add_accel_group(accel)
 
+window.connect("destroy", gtk.main_quit)
+
 window.show_all()
 
 need_resize=True
