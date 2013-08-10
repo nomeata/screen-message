@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # encoding:utf8
 
+#
+# This is the original version of screen message (then call vlshow); kept here
+# for historical reasons. sm.c is the real thing.
+#
+
 #     vlshow.py
 #     Copyright (C) 2006 Joachim Breitner
 #
