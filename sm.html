@@ -69,7 +69,7 @@ function adjust() {
 	ta = document.getElementById("textarea");
 	test = document.getElementById("test");
 	
-	test.innerHTML=ta.value;
+	test.textContent=ta.value;
 	// Otherwise, the newline would not be counted.
 	if (ta.value[ta.value.length-1] == "\n") {
 		test.innerHTML += '.';
