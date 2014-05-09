@@ -1,3 +1,9 @@
+screen-message (0.21-1) unstable; urgency=medium
+
+  * New upstream release (use stock gtk fullscreen functionality)
+
+ -- Joachim Breitner <nomeata@debian.org>  Fri, 09 May 2014 09:45:46 +0200
+
 screen-message (0.20-2) unstable; urgency=low
 
   * Upload to unstable 
