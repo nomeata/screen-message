@@ -1,11 +1,6 @@
 /*
 #     sm.c
-#     Copyright (C) 2006 - 2012 Joachim Breitner
-#
-#     The Code for making a window fullscreen was taken from src/fullscreen.c in
-#     the geeqie package:
-#     Copyright (C) 2004 John Ellis
-#                   2008 - 2010 The Geeqie Team
+#     Copyright (C) 2006 - 2014 Joachim Breitner
 #
 #     This program is free software; you can redistribute it and/or modify
 #     it under the terms of the GNU General Public License as published by
@@ -360,28 +355,7 @@ int main(int argc, char **argv) {
 	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_window_set_icon_name (GTK_WINDOW (window), "sm");
-
-	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(window));
-	int w = gdk_screen_get_width(screen);
-	int h = gdk_screen_get_height(screen);
-
-	GdkGeometry geometry;
-	geometry.min_width = w;
-	geometry.min_height = h;
-	geometry.max_width = w;
-	geometry.max_height = h;
-	geometry.base_width = w;
-	geometry.base_height = h;
-	geometry.win_gravity = GDK_GRAVITY_STATIC;
-	gtk_window_set_geometry_hints(GTK_WINDOW(window), window, &geometry,
-				      GDK_HINT_MIN_SIZE |
-				      GDK_HINT_MAX_SIZE |
-				      GDK_HINT_BASE_SIZE |
-				      GDK_HINT_WIN_GRAVITY |
-				      GDK_HINT_USER_POS);
-	gtk_window_set_default_size(GTK_WINDOW(window), w, h);
-	gtk_window_move(GTK_WINDOW(window), 0, 0);
-
+	gtk_window_fullscreen(GTK_WINDOW(window));
 
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
