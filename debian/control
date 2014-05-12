@@ -2,7 +2,13 @@ Source: screen-message
 Section: games
 Priority: optional
 Maintainer: Joachim Breitner <nomeata@debian.org>
-Build-Depends: debhelper (>= 5.0.51~), cdbs, pkg-config, libpango1.0-dev, libgtk2.0-dev, imagemagick
+Build-Depends:
+ debhelper (>= 5.0.51~),
+ cdbs,
+ pkg-config,
+ libpango1.0-dev,
+ libgtk-3-dev,
+ imagemagick
 Standards-Version: 3.8.4
 Vcs-Darcs: http://darcs.nomeata.de/screen-message.debian
 Vcs-Browser: http://darcs.nomeata.de/cgi-bin/darcsweb.cgi?r=screen-message.debian;a=summary

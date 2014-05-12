@@ -1,3 +1,9 @@
+screen-message (0.21-2) UNRELEASED; urgency=medium
+
+  * Fix build-depends (Closes: #747772)
+
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 12 May 2014 16:17:03 +0200
+
 screen-message (0.21-1) unstable; urgency=medium
 
   * New upstream release (use stock gtk fullscreen functionality)
