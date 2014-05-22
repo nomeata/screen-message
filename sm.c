@@ -354,8 +354,6 @@ int main(int argc, char **argv) {
 	gtk_init(&argc, &argv);
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_decorated(GTK_WINDOW(window), FALSE);
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_window_set_icon_name (GTK_WINDOW (window), "sm");
 	gtk_window_fullscreen(GTK_WINDOW(window));
 
@@ -462,10 +460,10 @@ int main(int argc, char **argv) {
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
 	g_signal_connect(G_OBJECT(tv), "move-cursor", G_CALLBACK(move_cursor), NULL);
 
-	if (!input_provided)
-		show_entry();
-	else
+	if (input_provided)
 		hide_entry(NULL);
+	else
+		show_entry();
 
 	gtk_main();
 
