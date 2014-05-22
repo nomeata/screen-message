@@ -59,6 +59,7 @@ static gulong quality_high_handler = 0;
 static gulong text_change_handler;
 
 gboolean hide_entry(gpointer *user_data) {
+	timeout_id = 0;
 	gtk_widget_hide(entry_widget);
 	gtk_widget_grab_focus(draw);
 	gtk_widget_queue_draw(draw);
@@ -109,6 +110,7 @@ static void hq(gboolean q, gboolean force){
 }
 
 static gboolean quality_high (gpointer data) {
+	quality_high_handler = 0;
 	hq(TRUE, FALSE);
 	return FALSE;
 }
