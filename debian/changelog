@@ -1,3 +1,9 @@
+screen-message (0.22-1) UNRELEASED; urgency=medium
+
+  * New minor upstream release
+
+ -- Joachim Breitner <nomeata@debian.org>  Thu, 22 May 2014 23:52:51 +0200
+
 screen-message (0.21-2) unstable; urgency=medium
 
   * Fix build-depends (Closes: #747772)
