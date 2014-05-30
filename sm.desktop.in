@@ -5,4 +5,4 @@ Exec=@BINPATH@/sm
 Icon=sm
 Terminal=false
 Type=Application
-Categories=GTK;Application;Utility;
+Categories=GTK;Utility;
