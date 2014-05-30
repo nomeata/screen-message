@@ -1,3 +1,10 @@
+screen-message (0.22.1-2) UNRELEASED; urgency=medium
+
+  * New minor upstream release (fixes sm.desktop), thanks to Sebastian Pipping
+    for the patch.
+
+ -- Joachim Breitner <nomeata@debian.org>  Fri, 30 May 2014 10:19:55 +0200
+
 screen-message (0.22-1) unstable; urgency=medium
 
   * New minor upstream release
