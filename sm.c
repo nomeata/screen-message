@@ -420,7 +420,7 @@ int main(int argc, char **argv) {
 	gtk_text_buffer_get_bounds(tb, &start, &end);
 	gtk_text_buffer_select_range(tb, &start, &end);
 
-	quit = gtk_button_new_from_stock(GTK_STOCK_QUIT);
+	quit = gtk_button_new_from_icon_name("application-exit", GTK_ICON_SIZE_BUTTON);
 	g_signal_connect(G_OBJECT(quit), "clicked", G_CALLBACK(gtk_main_quit), NULL);
 
 	GtkWidget *vbox_button = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
