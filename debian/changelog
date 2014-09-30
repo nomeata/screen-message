@@ -1,8 +1,8 @@
-screen-message (0.22.2-1) UNRELEASED; urgency=medium
+screen-message (0.22.2-1) unstable; urgency=medium
 
   * New upstream release (Closes: 763429)
 
- -- Joachim Breitner <nomeata@debian.org>  Tue, 30 Sep 2014 15:45:54 +0200
+ -- Joachim Breitner <nomeata@debian.org>  Tue, 30 Sep 2014 15:48:32 +0200
 
 screen-message (0.22.1-2) unstable; urgency=medium
 
