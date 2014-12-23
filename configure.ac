@@ -1,4 +1,4 @@
-AC_INIT(screen-message, 0.22.2, mail@joachim-breitner.de)
+AC_INIT(screen-message, 0.23, mail@joachim-breitner.de)
 AC_CONFIG_SRCDIR([sm.c])
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_FILES([setup.iss README.Win32])
