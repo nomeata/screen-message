@@ -36,8 +36,6 @@
 
 #define AUTOHIDE_TIMEOUT 3
 
-static gboolean quality = TRUE;
-
 static int timeout_id=0;
 
 static GtkWidget* window;
@@ -46,7 +44,6 @@ static GdkCursor *cursor;
 static GtkWidget* quit;
 static GtkWidget* tv;
 static GtkWidget* entry_widget;
-static GtkSettings* settings;
 static GtkTextBuffer* tb;
 static PangoFontDescription *font;
 static char *foreground = NULL;
@@ -55,7 +52,6 @@ static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 static int alignment = 0; // 0 = centered, 1 = left-aligned, 2 = right-aligned
 static GString *partial_input;
-static gulong quality_high_handler = 0;
 static gulong text_change_handler;
 
 gboolean hide_entry(gpointer *user_data) {
@@ -95,25 +91,6 @@ static char *get_text() {
 	return gtk_text_buffer_get_text(tb, &start, &end, FALSE);
 }
 
-static void hq(gboolean q, gboolean force){
-	if (q != quality) {
-		if (q)
-			gtk_settings_set_long_property(settings,"gtk-xft-antialias",1,"Hier halt");
-		else
-			gtk_settings_set_long_property(settings,"gtk-xft-antialias",0,"Hier halt");
-	}
-	else
-		if (force)
-			gtk_widget_queue_draw(draw);
-
-	quality = q;
-}
-
-static gboolean quality_high (gpointer data) {
-	quality_high_handler = 0;
-	hq(TRUE, FALSE);
-	return FALSE;
-}
 
 static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 	int q;
@@ -179,10 +156,6 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 			pango_cairo_show_layout (cr, layout);
 
 			cairo_restore(cr);
-
-			if (quality_high_handler) 
-				g_source_remove(quality_high_handler);
-			quality_high_handler = g_timeout_add(0, quality_high, NULL);
 		}
 		g_object_unref(layout);
 	}
@@ -273,11 +246,7 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 }
 
 static void newtext() {
-	if (quality_high_handler) {
-		g_source_remove(quality_high_handler);
-		quality_high_handler = 0;
-	}
-	hq(FALSE, TRUE);
+	gtk_widget_queue_draw(draw);
 }
 
 static void newtext_show_input() {
@@ -359,7 +328,6 @@ int main(int argc, char **argv) {
 
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-	settings = gtk_settings_get_default();
 	GdkRGBA  white, black;
 	if (foreground != NULL) {
 		gdk_rgba_parse(&black, foreground);
