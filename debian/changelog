@@ -1,3 +1,9 @@
+screen-message (0.24-1) unstable; urgency=medium
+
+  * New upstream release (Closes: 823757)
+
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 09 May 2016 12:50:10 +0200
+
 screen-message (0.23-1) unstable; urgency=medium
 
   * New upstream release:
