@@ -20,6 +20,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <pango/pango.h>
+#include <cairo.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +49,7 @@ static GtkTextBuffer* tb;
 static PangoFontDescription *font;
 static char *foreground = NULL;
 static char *background = NULL;
+static GdkRGBA  white, black;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 static int alignment = 0; // 0 = centered, 1 = left-aligned, 2 = right-aligned
@@ -94,8 +96,11 @@ static char *get_text() {
 
 static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 	int q;
-	const char *text = get_text();
 
+	gdk_cairo_set_source_rgba(cr, &white);
+	cairo_paint(cr);
+
+	const char *text = get_text();
 	if (strlen(text) > 0) {
 		int w1, h1;
 		static PangoLayout* layout;
@@ -119,6 +124,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 				pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 		}
 
+
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
 			int w2 = gtk_widget_get_allocated_width(draw);
@@ -135,14 +141,6 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 
 			double s = min ((double)w2/rw1, (double)h2/rh1);
 
-			cairo_save(cr);
-
-			GdkRGBA color;
-			gtk_style_context_get_color (gtk_widget_get_style_context(draw),
-				GTK_STATE_NORMAL, &color);
-			gdk_cairo_set_source_rgba(cr, &color);
-
-
 			if (alignment == 1) { // left align
 				cairo_translate(cr, (s * rw1)/2, h2/2);
 			} else if (alignment == 2) { // right align
@@ -153,9 +151,8 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 			cairo_rotate(cr, rotation * M_PI_2);
 			cairo_scale(cr, s, s);
 			cairo_translate(cr, -w1/2, -h1/2);
+			gdk_cairo_set_source_rgba(cr, &black);
 			pango_cairo_show_layout (cr, layout);
-
-			cairo_restore(cr);
 		}
 		g_object_unref(layout);
 	}
@@ -277,6 +274,13 @@ static void version() {
 	printf("%s\n", PACKAGE_STRING);
 }
 
+gboolean my_gdk_rgba_parse (GdkRGBA *rgba, const gchar *spec) {
+	gboolean ret = gdk_rgba_parse(rgba, spec);
+	if (!ret)  {
+	    fprintf (stderr, "Failed to parse color specification %s\n", spec);
+	}
+}
+
 int main(int argc, char **argv) {
 	GString *input;
 	int c;
@@ -328,23 +332,20 @@ int main(int argc, char **argv) {
 
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-	GdkRGBA  white, black;
 	if (foreground != NULL) {
-		gdk_rgba_parse(&black, foreground);
+		my_gdk_rgba_parse(&black, foreground);
 	} else {
-		gdk_rgba_parse(&black, "black");
+		my_gdk_rgba_parse(&black, "black");
 	}
 	if (background != NULL) {
-		gdk_rgba_parse(&white, background);
+		my_gdk_rgba_parse(&white, background);
 	} else {
-		gdk_rgba_parse(&white, "white");
+		my_gdk_rgba_parse(&white, "white");
 	}
 
 	draw = gtk_drawing_area_new();
 	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK|GDK_KEY_PRESS_MASK);
 	gtk_widget_set_size_request(draw,400,400);
-	gtk_widget_override_background_color(draw, GTK_STATE_NORMAL, &white);
-	gtk_widget_override_color(draw, GTK_STATE_NORMAL, &black);
 	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
 	g_signal_connect(G_OBJECT(draw), "key-press-event", G_CALLBACK(text_keypress), NULL);
 	gtk_widget_set_can_focus(draw, TRUE);
