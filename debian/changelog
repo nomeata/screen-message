@@ -1,3 +1,10 @@
+screen-message (0.25-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+  * Repository location switched to github
+
+ -- Joachim Breitner <nomeata@debian.org>  Tue, 09 May 2017 08:11:20 -0400
+
 screen-message (0.24-1) unstable; urgency=medium
 
   * New upstream release (Closes: 823757)
@@ -9,7 +16,7 @@ screen-message (0.23-1) unstable; urgency=medium
   * New upstream release:
 
     Disable temporary disabling of anti-aliasing
-    
+
     It seems to have stopped working with recent versions of gtk3, and
     furthermore causes every second keypress to be ignored.
 
