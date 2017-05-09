@@ -4,8 +4,9 @@ screen-message
 If you just want to disply a word or a short, possilby multi-line, text as
 large and as quickly as possible on your screen, then `screen-message` is the
 right too for you. It has been used already twice at a Debian conference for
-the Mugshots. `screen-message` runs on Linux and Windows and there is an online
-version on http://sm.nomeata.de/.
+the Mugshots.
+
+`screen-message` runs on Linux and Windows and there is an online version on http://sm.nomeata.de/.
 
 Installation Linux
 ------------------
@@ -21,7 +22,7 @@ Installation Windows
 --------------------
 
 Get the latest windows installer
-[from my webpage](http://www.joachim-breitner.de/en/projects#screen-message).
+[from my webpage](http://www.joachim-breitner.de/en/projects#screen-message). The windows installer lags behind a few versions; let me know if you need a new version.
 
 
 Usage
