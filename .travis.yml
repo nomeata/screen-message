@@ -1,3 +1,11 @@
+dist: trusty
+sudo: false
+addons:
+  apt:
+    packages:
+    - pkg-config
+    - libpango1.0-dev
+    - libgtk-3-dev
 language: c
 before_script: autoreconf --install
 script: ./configure && make && make distcheck
