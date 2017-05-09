@@ -1,7 +1,8 @@
-screen-message (0.25-1) UNRELEASED; urgency=medium
+screen-message (0.25-1) unstable; urgency=medium
 
   * New upstream release
   * Repository location switched to github
+  * Support -i and Ctrl-I (Closes: #862056)
 
  -- Joachim Breitner <nomeata@debian.org>  Tue, 09 May 2017 08:11:20 -0400
 
