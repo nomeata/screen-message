@@ -10,8 +10,8 @@ Build-Depends:
  libgtk-3-dev,
  imagemagick
 Standards-Version: 3.8.4
-Vcs-Darcs: http://darcs.nomeata.de/screen-message.debian
-Vcs-Browser: http://darcs.nomeata.de/cgi-bin/darcsweb.cgi?r=screen-message.debian;a=summary
+Vcs-Git: https://github.com/nomeata/screen-message
+Vcs-Browser: https://github.com/nomeata/screen-message
 
 Package: sm
 Architecture: any
