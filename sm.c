@@ -49,6 +49,7 @@ static GtkTextBuffer* tb;
 static PangoFontDescription *font;
 static char *foreground = NULL;
 static char *background = NULL;
+static int inverted = 0; // 0 = normal, 1 = foreground and background swapped
 static GdkRGBA  white, black;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
@@ -86,6 +87,11 @@ static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  Gdk
 	}
 }
 
+static void invert_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
+	inverted = !inverted;
+	gtk_widget_queue_draw(draw);
+}
+
 static char *get_text() {
 	GtkTextIter start, end;
 	gtk_text_buffer_get_start_iter(tb,&start);
@@ -97,7 +103,7 @@ static char *get_text() {
 static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 	int q;
 
-	gdk_cairo_set_source_rgba(cr, &white);
+	gdk_cairo_set_source_rgba(cr, inverted ? &black : &white);
 	cairo_paint(cr);
 
 	const char *text = get_text();
@@ -151,7 +157,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 			cairo_rotate(cr, rotation * M_PI_2);
 			cairo_scale(cr, s, s);
 			cairo_translate(cr, -w1/2, -h1/2);
-			gdk_cairo_set_source_rgba(cr, &black);
+			gdk_cairo_set_source_rgba(cr, inverted ? &white : &black);
 			pango_cairo_show_layout (cr, layout);
 		}
 		g_object_unref(layout);
@@ -260,6 +266,7 @@ static struct option const long_options[] =
 	{"version",    no_argument,       NULL, 'V'},
 	{"foreground", required_argument, NULL, 'f'},
 	{"background", required_argument, NULL, 'b'},
+	{"invert",     required_argument, NULL, 'i'},
 	{"font",       required_argument, NULL, 'n'},
 	{"rotate",     required_argument, NULL, 'r'},
 	{"align",      required_argument, NULL, 'a'},
@@ -267,7 +274,7 @@ static struct option const long_options[] =
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--inverted] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
 }
 
 static void version() {
@@ -286,7 +293,7 @@ int main(int argc, char **argv) {
 	int c;
 	int input_provided = 0;
 
-	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:", long_options, (int *) 0)) != EOF) {
+	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:i", long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'h':
 				usage(argv[0]);
@@ -314,6 +321,9 @@ int main(int argc, char **argv) {
 				break;
 			case 'a':
 				alignment = atoi(optarg);
+				break;
+			case 'i':
+				inverted = !inverted;
 				break;
 			default:
 				/* unknown switch received - at least
@@ -421,6 +431,8 @@ int main(int argc, char **argv) {
 	gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(gtk_main_quit), NULL, NULL));
 	gtk_accelerator_parse("Escape", &key, &mod);
 	gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(clear_text), NULL, NULL));
+	gtk_accelerator_parse("<Ctrl>I", &key, &mod);
+	gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(invert_text), NULL, NULL));
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 	gtk_widget_show_all(window);
 
