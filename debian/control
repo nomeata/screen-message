@@ -1,0 +1,26 @@
+Source: screen-message
+Section: games
+Priority: optional
+Maintainer: Joachim Breitner <nomeata@debian.org>
+Build-Depends:
+ debhelper (>= 5.0.51~),
+ cdbs,
+ pkg-config,
+ libpango1.0-dev,
+ libgtk-3-dev,
+ imagemagick
+Standards-Version: 3.8.4
+Vcs-Darcs: http://darcs.nomeata.de/screen-message.debian
+Vcs-Browser: http://darcs.nomeata.de/cgi-bin/darcsweb.cgi?r=screen-message.debian;a=summary
+
+Package: sm
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Displays a short text fullscreen
+ Screen Message will display a given multi-line message as large as
+ possible, fullscreen and black on white. You can specify the text either
+ when launching sm, or edit it while the program is running.
+ .
+ It is useful to send messages across a room, e.g. during an university
+ lecture. For fast startup, it is recommended to bind it to a key in your
+ Desktop Environment.

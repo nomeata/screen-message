@@ -1,0 +1,3 @@
+?package(sm):needs="X11" section="Games/Toys"\
+  title="sm" command="/usr/games/sm"\
+  icon="/usr/share/pixmaps/sm.xpm"

@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+
+install/sm::
+	dh_icons
+	mkdir -p debian/sm/usr/share/pixmaps
+	convert sm.png -resize 32x32 debian/sm/usr/share/pixmaps/sm.xpm
