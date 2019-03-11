@@ -1,7 +1,7 @@
 screen-message
 ==============
 
-If you just want to disply a word or a short, possilby multi-line, text as
+If you just want to display a word or a short, possibly multi-line, text as
 large and as quickly as possible on your screen, then `screen-message` is the
 right too for you. It has been used already twice at a Debian conference for
 the Mugshots.
