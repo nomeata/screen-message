@@ -103,7 +103,7 @@ Remote controlling `sm`
 
 If  sm  is  called  with `-` as a command line argument, it will read the text to be shown
 from the standard input. It will read the input until it reaches the end of the file, or
-the  line  feed character `\f`, and show the input read so far at once. Newline characters
+the  line  form character `\f`, and show the input read so far at once. Newline characters
 at the beginning or the end are ignored. The input is assumed to be UTF-8  encoded.
 
 This  can  be  used to create automatic displays of changing data or similar tricks. For
