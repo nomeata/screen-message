@@ -32,9 +32,9 @@ Screen Message  will display a given multi-line message as large as possible, fu
 and black on white. You can specify the text either when launching sm, or edit it  while
 the program is running.
 
-After  a short timeout, the text entry and the quit button will disappear, leaving noth‐
-ing on the screen but the entered text. To continue entering text, just start typing  or
-(left-)click anywhere on the screen.
+After  a short timeout, the text entry and the quit button will disappear, leaving
+nothing on the screen but the entered text. To continue entering text, just start typing
+or (left-)click anywhere on the screen.
 
 To clear the displayed text, press Escape.
 
@@ -55,8 +55,8 @@ Options
 
    Define a different color to use for the foreground of the text  to  display  than
    black.  The text string can be in any of the forms accepted by XParseColor; these
-   include name for a color from rgb.txt, such as DarkSlateGray, or a hex specifica‐
-   tion such as #3050b2 or #35b.
+   include name for a color from rgb.txt, such as DarkSlateGray, or a hex
+   specification such as #3050b2 or #35b.
 
  * `-b`, `--background=colordesc`
 
