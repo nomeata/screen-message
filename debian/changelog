@@ -1,3 +1,10 @@
+screen-message (0.26-1) unstable; urgency=medium
+
+  * New upstream release
+  * Fix memory leak (thanks to Santtu Lakkala)
+
+ -- Joachim Breitner <nomeata@debian.org>  Fri, 26 Feb 2021 14:12:32 +0100
+
 screen-message (0.25-1) unstable; urgency=medium
 
   * New upstream release
