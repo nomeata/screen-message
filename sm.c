@@ -106,12 +106,12 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 	gdk_cairo_set_source_rgba(cr, inverted ? &black : &white);
 	cairo_paint(cr);
 
-	const char *text = get_text();
-	if (strlen(text) > 0) {
+	char *text = get_text();
+	if (text && *text) {
 		int w1, h1;
 		static PangoLayout* layout;
 
-		layout = gtk_widget_create_pango_layout(draw, get_text());
+		layout = gtk_widget_create_pango_layout(draw, text);
 		pango_layout_set_font_description(layout, font);
 
 		switch(alignment){
@@ -162,6 +162,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 		}
 		g_object_unref(layout);
 	}
+	g_free(text);
 }
 
 static gboolean text_keypress(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
