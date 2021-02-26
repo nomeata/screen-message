@@ -5,6 +5,12 @@ screen-message (0.26-1) unstable; urgency=medium
 
  -- Joachim Breitner <nomeata@debian.org>  Fri, 26 Feb 2021 14:12:32 +0100
 
+screen-message (0.25-2) unstable; urgency=medium
+
+  * Switch to debhelper 13 (Closes: #965812)
+
+ -- Joachim Breitner <nomeata@debian.org>  Fri, 24 Jul 2020 19:44:28 +0200
+
 screen-message (0.25-1) unstable; urgency=medium
 
   * New upstream release

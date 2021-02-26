@@ -3,8 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Joachim Breitner <nomeata@debian.org>
 Build-Depends:
- debhelper (>= 5.0.51~),
- cdbs,
+ debhelper-compat (= 13),
  pkg-config,
  libpango1.0-dev,
  libgtk-3-dev,
