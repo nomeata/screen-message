@@ -54,9 +54,9 @@ Options
  * `-f`, `--foreground=colordesc`
 
    Define a different color to use for the foreground of the text  to  display  than
-   black.  The text string can be in any of the forms accepted by XParseColor; these
-   include name for a color from rgb.txt, such as DarkSlateGray, or a hex
-   specification such as #3050b2 or #35b.
+   black.  The text string can be in any of the forms accepted by `XParseColor`; these
+   include name for a color from `rgb.txt`, such as `DarkSlateGray`, or a hex
+   specification such as `#3050b2` or `#35b`.
 
  * `-b`, `--background=colordesc`
 
