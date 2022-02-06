@@ -6,7 +6,8 @@ large and as quickly as possible on your screen, then `screen-message` is the
 right too for you. It has been used already twice at a Debian conference for
 the Mugshots.
 
-`screen-message` runs on Linux and Windows and there is an online version on http://sm.nomeata.de/.
+`screen-message` runs on Linux and Windows and there is an online version on
+http://sm.nomeata.de/ (with sources in the `docs/` folder of this project)
 
 Installation Linux
 ------------------
@@ -115,6 +116,6 @@ example, the following command will create a simple digital watch:
 Contact
 -------
 
-Use the [GitHub issue tracker] or write to Joachim Breitner <<mail@joachim-breitner.de>>.
+Use the [GitHub issue tracker] or write to Joachim Breitner <mail@joachim-breitner.de>.
 
 [GitHub issue tracker]: (https://github.com/nomeata/screen-message/issues)
