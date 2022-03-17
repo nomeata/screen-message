@@ -50,6 +50,7 @@ static PangoFontDescription *font;
 static char *foreground = NULL;
 static char *background = NULL;
 static int inverted = 0; // 0 = normal, 1 = foreground and background swapped
+static double user_scaling = 1.0;
 static GdkRGBA  white, black;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
@@ -130,7 +131,6 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 				pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 		}
 
-
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
 			int w2 = gtk_widget_get_allocated_width(draw);
@@ -146,6 +146,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 			}
 
 			double s = min ((double)w2/rw1, (double)h2/rh1);
+			s *= user_scaling;
 
 			if (alignment == 1) { // left align
 				cairo_translate(cr, (s * rw1)/2, h2/2);
@@ -154,6 +155,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 			} else {
 				cairo_translate(cr, w2/2, h2/2);
 			}
+
 			cairo_rotate(cr, rotation * M_PI_2);
 			cairo_scale(cr, s, s);
 			cairo_translate(cr, -w1/2, -h1/2);
@@ -271,11 +273,12 @@ static struct option const long_options[] =
 	{"font",       required_argument, NULL, 'n'},
 	{"rotate",     required_argument, NULL, 'r'},
 	{"align",      required_argument, NULL, 'a'},
+	{"scale",      required_argument, NULL, 's'},
 	{0,0,0,0}
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--inverted] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--inverted] [-s|--scale=factor] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
 }
 
 static void version() {
@@ -294,26 +297,22 @@ int main(int argc, char **argv) {
 	int c;
 	int input_provided = 0;
 
-	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:i", long_options, (int *) 0)) != EOF) {
+	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:is:", long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'h':
 				usage(argv[0]);
 				return 0;
 				break;
-
 			case 'V':
 				version();
 				return 0;
 				break;
-
 			case 'f':
 				foreground = optarg;
 				break;
-
 			case 'b':
 				background = optarg;
 				break;
-
 			case 'n':
 				fontdesc = optarg;
 				break;
@@ -325,6 +324,13 @@ int main(int argc, char **argv) {
 				break;
 			case 'i':
 				inverted = !inverted;
+				break;
+			case 's':
+				user_scaling = atof(optarg);
+				if (user_scaling > 1.0 || user_scaling < 0.0) {
+					printf("Scale factor must be within [0.0, 1.0]\n");
+					return 0;
+				}
 				break;
 			default:
 				/* unknown switch received - at least
