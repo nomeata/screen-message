@@ -308,7 +308,7 @@ static void version() {
 	printf("%s\n", PACKAGE_STRING);
 }
 
-gboolean my_gdk_rgba_parse (GdkRGBA *rgba, const gchar *spec) {
+static void my_gdk_rgba_parse (GdkRGBA *rgba, const gchar *spec) {
 	gboolean ret = gdk_rgba_parse(rgba, spec);
 	if (!ret)  {
 	    fprintf (stderr, "Failed to parse color specification %s\n", spec);
