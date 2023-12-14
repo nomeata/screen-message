@@ -125,7 +125,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 				pango_layout_set_alignment(layout,PANGO_ALIGN_RIGHT);
 				break;
 			default:
-				// we propably don't want to annoy the user, so default to
+				// we probably don't want to annoy the user, so default to
 				// the old default-behaviour:
 				pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 		}
