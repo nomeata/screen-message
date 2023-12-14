@@ -68,7 +68,7 @@ gboolean hide_entry(gpointer *user_data) {
 	return FALSE;
 }
 
-static void show_entry() {
+static void show_entry(void) {
 	if (timeout_id) {
 		g_source_remove(timeout_id);
 		timeout_id = 0;
@@ -104,7 +104,7 @@ static void invert_text(GtkAccelGroup *accel, GObject *window, guint keyval,  Gd
 	gtk_widget_queue_draw(draw);
 }
 
-static char *get_text() {
+static char *get_text(void) {
 	GtkTextIter start, end;
 	gtk_text_buffer_get_start_iter(tb,&start);
 	gtk_text_buffer_get_end_iter(tb,&end);
@@ -269,11 +269,11 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 		return FALSE;
 }
 
-static void newtext() {
+static void newtext(void) {
 	gtk_widget_queue_draw(draw);
 }
 
-static void newtext_show_input() {
+static void newtext_show_input(void) {
 	show_entry();
 }
 
@@ -304,7 +304,7 @@ static void usage(char *cmd) {
 	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--inverted] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
 }
 
-static void version() {
+static void version(void) {
 	printf("%s\n", PACKAGE_STRING);
 }
 
