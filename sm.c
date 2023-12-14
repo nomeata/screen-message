@@ -247,7 +247,7 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 	}
 
 	// remove beginning and trailing newlines, if any
-	gssize cnt = 0;
+	gsize cnt = 0;
 	while ((input->len > cnt) && (input->str[cnt] == '\n')) {
 		cnt++;
 	}
