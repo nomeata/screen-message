@@ -165,7 +165,7 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 			} else {
 				cairo_translate(cr, w2/2, h2/2);
 			}
-			cairo_rotate(cr, rotation * M_PI_2);
+			cairo_rotate(cr, rotation * G_PI_2);
 			cairo_scale(cr, s, s);
 			cairo_translate(cr, -w1/2, -h1/2);
 			gdk_cairo_set_source_rgba(cr, inverted ? &white : &black);
