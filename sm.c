@@ -58,6 +58,8 @@ static GString *partial_input;
 static gulong text_change_handler;
 
 gboolean hide_entry(gpointer *user_data) {
+	(void)user_data;
+
 	timeout_id = 0;
 	gtk_widget_hide(entry_widget);
 	gtk_widget_grab_focus(draw);
@@ -79,6 +81,11 @@ static void show_entry() {
 }
 
 static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
+	(void)accel;
+	(void)window;
+	(void)keyval;
+	(void)modifier;
+
 	if( gtk_text_buffer_get_char_count(tb) ) {
 		gtk_text_buffer_set_text(tb,"",-1);
 		show_entry();
@@ -88,6 +95,11 @@ static void clear_text(GtkAccelGroup *accel, GObject *window, guint keyval,  Gdk
 }
 
 static void invert_text(GtkAccelGroup *accel, GObject *window, guint keyval,  GdkModifierType modifier) {
+	(void)accel;
+	(void)window;
+	(void)keyval;
+	(void)modifier;
+
 	inverted = !inverted;
 	gtk_widget_queue_draw(draw);
 }
@@ -101,8 +113,7 @@ static char *get_text() {
 
 
 static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
-	int q;
-
+	(void)data;
 	gdk_cairo_set_source_rgba(cr, inverted ? &black : &white);
 	cairo_paint(cr);
 
@@ -166,6 +177,9 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 }
 
 static gboolean text_keypress(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
+	(void)widget;
+	(void)user_data;
+
 	// forward signal to the text view
 	gboolean ret;
 	g_signal_emit_by_name(tv, "key-press-event", event, &ret);
@@ -174,6 +188,9 @@ static gboolean text_keypress(GtkWidget *widget, GdkEventButton *event, gpointer
 }
 
 static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer *user_data) {
+	(void)widget;
+	(void)user_data;
+
 	show_entry();
 	if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
 		GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
@@ -189,6 +206,9 @@ static gboolean text_clicked(GtkWidget *widget, GdkEventButton *event, gpointer 
 }
 
 static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer data){
+	(void)condition;
+	(void)data;
+
 	gchar buf[1024];
 	GString *input;
 	GIOStatus stat = G_IO_STATUS_NORMAL;
@@ -258,6 +278,12 @@ static void newtext_show_input() {
 }
 
 static void move_cursor(GtkTextView* tv, GtkMovementStep step, gint count, gboolean extend_selection, gpointer user_data) {
+	(void)tv;
+	(void)step;
+	(void)count;
+	(void)extend_selection;
+	(void)user_data;
+
 	show_entry();
 }
 
