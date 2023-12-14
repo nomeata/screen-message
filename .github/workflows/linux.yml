@@ -1,0 +1,112 @@
+# Copyright (c) 2023 Sebastian Pipping <sebastian@pipping.org>
+# Licensed under the GPL v2 or later
+
+name: Build on Linux
+
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: '0 3 * * 5'  # Every Friday at 3am
+  workflow_dispatch:
+
+# Minimum permissions for security
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Build (${{ matrix.cc }})
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc-13
+            cxx: g++-13
+            clang_major_version: null
+            clang_repo_suffix: null
+          - cc: clang-17
+            cxx: clang++-17
+            clang_major_version: 17
+            clang_repo_suffix: -17
+          - cc: clang-18
+            cxx: clang++-18
+            clang_major_version: 18
+            clang_repo_suffix:
+    steps:
+      - name: Checkout Git branch
+        uses: actions/checkout@v4
+
+      - name: Add Clang/LLVM repositories
+        if: "${{ contains(matrix.cxx, 'clang') }}"
+        run: |-
+          set -x
+          source /etc/os-release
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository "deb http://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}${{ matrix.clang_repo_suffix }} main"
+
+      - name: Install build dependencies
+        run: |-
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            libgtk-3-dev \
+            libpango1.0-dev \
+            pkg-config
+
+      - name: Install build dependency Clang ${{ matrix.clang_major_version }}
+        if: "${{ contains(matrix.cxx, 'clang') }}"
+        run: |-
+          sudo apt-get install --yes --no-install-recommends -V \
+              clang-${{ matrix.clang_major_version }} \
+              libclang-rt-${{ matrix.clang_major_version }}-dev
+
+      - name: 'autoreconf'
+        run: |-
+          set -x
+          autoreconf --warnings=all --install --verbose
+
+      - name: './configure'
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+          CFLAGS: -std=c99 -Wall -Wextra -pedantic -Werror
+          LDFLAGS: -Wl,--as-needed
+        run: |-
+          set -x
+          mkdir build
+          cd build
+          ../configure
+
+      - name: 'make all'
+        run: |-
+          set -x
+          make -C build -j$(nproc) all
+          ./build/sm --version  # smoke test
+
+      - name: 'make distcheck'
+        run: |-
+          set -x
+          make -C build distcheck
+          ls -lh build/screen-message-*.tar.gz
+
+      - name: 'Upload "make dist" artifacts'
+        # This is a cheap "only once" guard: only a single job satisfies this check
+        if: "${{ matrix.clang_repo_suffix == '' }}"
+        uses: actions/upload-artifact@v3
+        with:
+          name: screen-message-${{ github.sha }}-release-tarball
+          path: build/screen-message-*.tar.gz
+          if-no-files-found: error
+
+      - name: 'make install'
+        run: |-
+          set -x -o pipefail
+          make -C build install DESTDIR="${PWD}"/ROOT/
+          find ROOT/ | sort | xargs ls -ld
+
+      - name: 'make uninstall'
+        run: |-
+          set -x
+          make -C build uninstall DESTDIR="${PWD}"/ROOT/
+          [[ "$(find ROOT/ -not -type d | tee /dev/stderr)" == '' ]]  # i.e. fail CI if leftover files
