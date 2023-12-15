@@ -26,6 +26,7 @@ jobs:
             cxx: g++-13
             clang_major_version: null
             clang_repo_suffix: null
+            upload: true
           - cc: clang-17
             cxx: clang++-17
             clang_major_version: 17
@@ -91,9 +92,8 @@ jobs:
           ls -lh build/screen-message-*.tar.gz
 
       - name: 'Upload "make dist" artifacts'
-        # This is a cheap "only once" guard: only a single job satisfies this check
-        if: "${{ matrix.clang_repo_suffix == '' }}"
-        uses: actions/upload-artifact@v3
+        if: "${{ matrix.upload }}"
+        uses: actions/upload-artifact@v4
         with:
           name: screen-message-${{ github.sha }}-release-tarball
           path: build/screen-message-*.tar.gz
