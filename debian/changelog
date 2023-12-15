@@ -1,9 +1,9 @@
-screen-message (0.27-1) unstable; urgency=medium
+screen-message (0.28-1) unstable; urgency=medium
 
   * New upstream release
   * Make manual page example copy’n’pastable (h't Sebastian Pipping)
 
- -- Joachim Breitner <mail@joachim-breitner.de>  Thu, 14 Dec 2023 19:47:09 +0100
+ -- Joachim Breitner <mail@joachim-breitner.de>  Fri, 15 Dec 2023 10:19:05 +0100
 
 screen-message (0.26-1) unstable; urgency=medium
 
