@@ -3,11 +3,10 @@ sm_SOURCES = sm.c
 sm_CFLAGS = $(DEPS_CFLAGS)
 sm_LDADD = $(DEPS_LIBS)
 
-execgamesdir= $(prefix)/games
-execgames_PROGRAMS=sm
+bin_PROGRAMS=sm
 
 sm.desktop: sm.desktop.in
-	sed -e s%@BINPATH@%${execgamesdir}% <$< >$@
+	sed -e s%@BINPATH@%${bindir}% <$< >$@
 
 desktopdir = $(datadir)/applications
 desktop_DATA = sm.desktop
@@ -28,11 +27,11 @@ update-icon-cache:
 	        echo "***   $(gtk_update_icon_cache)"; \
 	fi
 
-dist_man_MANS = sm.6
+dist_man_MANS = sm.1
 # some of these files are just added to make the Debian packaging based on the
 # same VCS painless... (otherwise dpkg would try to add these files as patches)
 EXTRA_DIST = sm.py sm.desktop.in docs/index.html docs/sm.webapp docs/webapp.html README.Win32 sm.ico sm.rc docs/sm-128.png docs/sm.svg gtkzoom.h gtkzoom.c docs/sm-fsmi-ka.jpg
-CLEANFILES = sm.desktop 
+CLEANFILES = sm.desktop
 
 if WIN32
 AM_LDFLAGS = -Wl,--subsystem,windows
@@ -46,7 +45,7 @@ sm-icon.o: sm.rc
 	$(WINDRES) $< $@
 
 $(INSTALLER): setup.iss sm.exe README.Win32
-	"$(WINE)" "$(ISCC)" /O. "/F$(INSTALLER_BASE)" $< 
+	"$(WINE)" "$(ISCC)" /O. "/F$(INSTALLER_BASE)" $<
 
 installer: $(INSTALLER)
 

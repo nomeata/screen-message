@@ -14,9 +14,7 @@ Installation Linux
 
 Get it from your distribution with
 
-    apt install sm  # Debian, Ubuntu
-    emerge x11-misc/screen-message  # Gentoo
-    zypper install screen-message  # openSUSE
+    apt install sm
 
 or install it from this source repository, if you know how to do these things.
 
