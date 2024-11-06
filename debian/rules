@@ -1,8 +1,12 @@
 #!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
 %:
 	dh $@
 
 override_dh_icons:
 	mkdir -p debian/sm/usr/share/pixmaps
-	convert sm.png -resize 32x32 debian/sm/usr/share/pixmaps/sm.xpm
+	convert docs/sm.png -resize 32x32 debian/sm/usr/share/pixmaps/sm.xpm
 	dh_icons
