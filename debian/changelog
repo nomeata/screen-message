@@ -244,7 +244,7 @@ screen-message (0.6-1) unstable; urgency=low
   * New upstream release:
     * Read from stdin if parameter is - (Closes: #429646)
     * Middle-Clicking anywhere works (Closes: #429648)
-    * End program upon destory (Closes: 428893)
+    * End program upon destroy (Closes: 428893)
     * Fix colors to black/white independent of the theme
 
  -- Joachim Breitner <nomeata@debian.org>  Tue, 19 Jun 2007 13:19:51 +0100
