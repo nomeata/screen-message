@@ -54,6 +54,7 @@ static GdkRGBA  white, black;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 static int alignment = 0; // 0 = centered, 1 = left-aligned, 2 = right-aligned
+static int markup = 0; // 0 = plain text, 1 = pango xml
 static int interactive = 1;
 static GString *partial_input;
 static gulong text_change_handler;
@@ -122,6 +123,20 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 	if (text && *text) {
 		int w1, h1;
 		static PangoLayout* layout;
+		PangoAttrList *attr = 0;
+
+		if (markup == 1) {
+			char *untagged;
+			GError *error = NULL;
+
+			if (pango_parse_markup(text, -1, 0, &attr, &untagged, 0, &error)) {
+				g_free(text);
+				text = untagged;
+			} else {
+				fprintf(stderr, "Markup ignored: %s\n", error->message);
+				g_error_free(error);
+			}
+		}
 
 		layout = gtk_widget_create_pango_layout(draw, text);
 		pango_layout_set_font_description(layout, font);
@@ -142,6 +157,10 @@ static void redraw(GtkWidget *draw, cairo_t *cr, gpointer data) {
 				pango_layout_set_alignment(layout,PANGO_ALIGN_CENTER);
 		}
 
+		if (attr) {
+			pango_layout_set_attributes(layout, attr);
+			pango_attr_list_unref(attr);
+		}
 
 		pango_layout_get_pixel_size(layout, &w1, &h1);
 		if (w1>0 && h1>0) {
@@ -300,12 +319,13 @@ static struct option const long_options[] =
 	{"font",       required_argument, NULL, 'n'},
 	{"rotate",     required_argument, NULL, 'r'},
 	{"align",      required_argument, NULL, 'a'},
+	{"markup",     no_argument,       NULL, 'm'},
 	{"kiosk",      no_argument,       NULL, 'k'},
 	{0,0,0,0}
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--invert] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2] [-k|--kiosk]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--invert] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2] [-m|--markup] [-k|--kiosk]\n", cmd);
 }
 
 static void version(void) {
@@ -324,7 +344,7 @@ int main(int argc, char **argv) {
 	int c;
 	int input_provided = 0;
 
-	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:ik", long_options, (int *) 0)) != EOF) {
+	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:ikm", long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'h':
 				usage(argv[0]);
@@ -339,7 +359,6 @@ int main(int argc, char **argv) {
 			case 'f':
 				foreground = optarg;
 				break;
-
 			case 'b':
 				background = optarg;
 				break;
@@ -355,6 +374,9 @@ int main(int argc, char **argv) {
 				break;
 			case 'i':
 				inverted = !inverted;
+				break;
+			case 'm':
+				markup = !markup;
 				break;
 
 			case 'k':

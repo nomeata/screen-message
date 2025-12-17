@@ -91,6 +91,17 @@ Options
 
    Aligns the text centered (`-a 0`), left (`-a 1`) or right (`-a 2`).
 
+ * `-m`, `--markup`
+
+   Interpret input text as [Pango markup](https://docs.gtk.org/Pango/pango_markup.html#pango-markup)
+   XML instead of plain text, with attributes to override styling.
+   For example:
+
+       The <big>quick <span color="#F60">brown</span> &#x1F98A;</big>
+       jumped over the <span letter_spacing="102400">lazy &#128021;</span>.
+
+   Invalid syntax will result in the unparsed prompt being shown.
+
  * `--` (Double  dash)
 
    End option parsing. This is used to be able to actually hand over

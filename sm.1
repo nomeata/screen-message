@@ -78,6 +78,22 @@ rotates the display to the left, and \-r 2 puts it upside down.
 .BI \-a,\ \-\-align= alignment
 Aligns the text centered (\-a 0), left (\-a 1) or right (\-a 2).
 .TP
+.BI \-m, \-\-markup
+Interpret input text as Pango markup
+XML instead of plain text, with attributes to override styling.
+The syntax is described on
+<\fIhttps://docs.gtk.org/Pango/pango_markup.html\fR>.
+For example:
+
+.in +5
+.nf
+The <big>quick <span color="#F60">brown</span> &#x1F98A;</big>
+jumped over the <span letter_spacing="102400">lazy &#128021;</span>.
+.fi
+.in
+
+Invalid syntax will result in the unparsed prompt being shown.
+.TP
 .BI \-\-
 (Double dash) End option parsing. This is used to be able to actually hand over text
 that starts of with an dash.
