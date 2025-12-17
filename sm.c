@@ -293,7 +293,7 @@ static struct option const long_options[] =
 	{"version",    no_argument,       NULL, 'V'},
 	{"foreground", required_argument, NULL, 'f'},
 	{"background", required_argument, NULL, 'b'},
-	{"invert",     required_argument, NULL, 'i'},
+	{"invert",     no_argument,       NULL, 'i'},
 	{"font",       required_argument, NULL, 'n'},
 	{"rotate",     required_argument, NULL, 'r'},
 	{"align",      required_argument, NULL, 'a'},
@@ -301,7 +301,7 @@ static struct option const long_options[] =
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--inverted] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--invert] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
 }
 
 static void version(void) {
