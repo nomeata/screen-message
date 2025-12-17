@@ -54,6 +54,7 @@ static GdkRGBA  white, black;
 static char *fontdesc = NULL;
 static int rotation = 0; // 0 = normal, 1 = left, 2 = inverted, 3 = right
 static int alignment = 0; // 0 = centered, 1 = left-aligned, 2 = right-aligned
+static int interactive = 1;
 static GString *partial_input;
 static gulong text_change_handler;
 
@@ -257,9 +258,11 @@ static gboolean read_chan(GIOChannel *chan, GIOCondition condition, gpointer dat
 		g_string_truncate(input, input->len - 1);
 	}
 
-	g_signal_handler_block (tb, text_change_handler);
+	if (text_change_handler)
+		g_signal_handler_block (tb, text_change_handler);
 	gtk_text_buffer_set_text (tb, input->str, input->len);
-	g_signal_handler_unblock (tb, text_change_handler);
+	if (text_change_handler)
+		g_signal_handler_unblock (tb, text_change_handler);
 
 	g_string_free(input, TRUE);
 
@@ -297,11 +300,12 @@ static struct option const long_options[] =
 	{"font",       required_argument, NULL, 'n'},
 	{"rotate",     required_argument, NULL, 'r'},
 	{"align",      required_argument, NULL, 'a'},
+	{"kiosk",      no_argument,       NULL, 'k'},
 	{0,0,0,0}
 };
 
 static void usage(char *cmd) {
-	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--invert] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2]\n", cmd);
+	printf("Usage: %s [-h|--help] [-V|--version] [-f|--foreground=colordesc] [-b|--background=colordesc] [-i|--invert] [-n|--font=fontdesc] [-r|--rotate=0,1,2,3] [-a|--align=0,1,2] [-k|--kiosk]\n", cmd);
 }
 
 static void version(void) {
@@ -320,7 +324,7 @@ int main(int argc, char **argv) {
 	int c;
 	int input_provided = 0;
 
-	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:i", long_options, (int *) 0)) != EOF) {
+	while ((c = getopt_long (argc, argv, "hVf:b:n:r:a:ik", long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'h':
 				usage(argv[0]);
@@ -352,6 +356,11 @@ int main(int argc, char **argv) {
 			case 'i':
 				inverted = !inverted;
 				break;
+
+			case 'k':
+				interactive = !interactive;
+				break;
+
 			default:
 				/* unknown switch received - at least
 				 * give usage but continue and use the
@@ -383,9 +392,11 @@ int main(int argc, char **argv) {
 	draw = gtk_drawing_area_new();
 	gtk_widget_set_events(draw, GDK_BUTTON_PRESS_MASK|GDK_KEY_PRESS_MASK);
 	gtk_widget_set_size_request(draw,400,400);
-	g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
-	g_signal_connect(G_OBJECT(draw), "key-press-event", G_CALLBACK(text_keypress), NULL);
-	gtk_widget_set_can_focus(draw, TRUE);
+	if (interactive) {
+		g_signal_connect(G_OBJECT(draw), "button-press-event", G_CALLBACK(text_clicked), NULL);
+		g_signal_connect(G_OBJECT(draw), "key-press-event", G_CALLBACK(text_keypress), NULL);
+		gtk_widget_set_can_focus(draw, TRUE);
+	}
 
 	cursor = gdk_cursor_new_for_display(gtk_widget_get_display(GTK_WIDGET(draw)), GDK_BLANK_CURSOR);
 
@@ -456,19 +467,23 @@ int main(int argc, char **argv) {
 	GdkModifierType mod;
 	gtk_accelerator_parse("<Ctrl>Q", &key, &mod);
 	gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(gtk_main_quit), NULL, NULL));
-	gtk_accelerator_parse("Escape", &key, &mod);
-	gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(clear_text), NULL, NULL));
-	gtk_accelerator_parse("<Ctrl>I", &key, &mod);
-	gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(invert_text), NULL, NULL));
+	if (interactive) {
+		gtk_accelerator_parse("Escape", &key, &mod);
+		gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(clear_text), NULL, NULL));
+		gtk_accelerator_parse("<Ctrl>I", &key, &mod);
+		gtk_accel_group_connect(accel, key, mod, 0, g_cclosure_new(G_CALLBACK(invert_text), NULL, NULL));
+	}
 	gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 	gtk_widget_show_all(window);
 
 	g_signal_connect_after(G_OBJECT(draw), "draw", G_CALLBACK(redraw), NULL);
-	text_change_handler = g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext_show_input), NULL);
 	g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext), NULL);
-	g_signal_connect(G_OBJECT(tv), "move-cursor", G_CALLBACK(move_cursor), NULL);
+	if (interactive) {
+		text_change_handler = g_signal_connect(G_OBJECT(tb), "changed", G_CALLBACK(newtext_show_input), NULL);
+		g_signal_connect(G_OBJECT(tv), "move-cursor", G_CALLBACK(move_cursor), NULL);
+	}
 
-	if (input_provided)
+	if (input_provided || !interactive)
 		hide_entry(NULL);
 	else
 		show_entry();

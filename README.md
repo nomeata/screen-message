@@ -54,6 +54,10 @@ Options
    Text  to  display at start up. Defaults to ":-)". If "-" is passed to sm, it will
    read the text to display from the standard input, see REMOTE CONTROLLING SM.
 
+ * `-k`, `--kiosk`
+
+   Non-interactive mode, ignoring user input except for Ctrl-Q.
+
  * `-f`, `--foreground=colordesc`
 
    Define a different color to use for the foreground of the text  to  display  than
@@ -112,7 +116,7 @@ at the beginning or the end are ignored. The input is assumed to be UTF-8  encod
 This  can  be  used to create automatic displays of changing data or similar tricks. For
 example, the following command will create a simple digital watch:
 
-    (while sleep 1; do date +%T; printf '\f'; done) | sm -
+    (while sleep 1; do date +%T; printf '\f'; done) | sm -k -
 
 
 Contact
