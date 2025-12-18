@@ -30,7 +30,7 @@ update-icon-cache:
 dist_man_MANS = sm.1
 # some of these files are just added to make the Debian packaging based on the
 # same VCS painless... (otherwise dpkg would try to add these files as patches)
-EXTRA_DIST = sm.py sm.desktop.in docs/index.html docs/sm.webapp docs/webapp.html README.Win32 sm.ico sm.rc docs/sm-128.png docs/sm.svg gtkzoom.h gtkzoom.c docs/sm-fsmi-ka.jpg
+EXTRA_DIST = sm.py sm.desktop.in docs/index.html docs/sm.webapp docs/webapp.html README.Win32 sm.ico sm.rc docs/sm-128.png docs/sm.svg gtkzoom.h gtkzoom.c
 CLEANFILES = sm.desktop
 
 if WIN32
