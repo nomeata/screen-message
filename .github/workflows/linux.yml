@@ -17,31 +17,27 @@ permissions:
 jobs:
   linux:
     name: Build (${{ matrix.cc }})
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         include:
-          - cc: gcc-13
-            cxx: g++-13
+          - cc: gcc
             clang_major_version: null
-            clang_repo_suffix: null
             upload: true
-          - cc: clang-18
-            cxx: clang++-18
-            clang_major_version: 18
-            clang_repo_suffix: -18
+          - cc: clang-21
+            clang_major_version: 21
     steps:
       - name: Checkout Git branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Add Clang/LLVM repositories
-        if: "${{ contains(matrix.cxx, 'clang') }}"
+        if: "${{ contains(matrix.cc, 'clang') }}"
         run: |-
           set -x
           source /etc/os-release
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo add-apt-repository "deb http://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}${{ matrix.clang_repo_suffix }} main"
+          sudo add-apt-repository "deb http://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}-${{ matrix.clang_major_version }} main"
 
       - name: Install build dependencies
         run: |-
@@ -52,7 +48,7 @@ jobs:
             pkg-config
 
       - name: Install build dependency Clang ${{ matrix.clang_major_version }}
-        if: "${{ contains(matrix.cxx, 'clang') }}"
+        if: "${{ contains(matrix.cc, 'clang') }}"
         run: |-
           sudo apt-get install --yes --no-install-recommends -V \
               clang-${{ matrix.clang_major_version }} \
@@ -66,7 +62,6 @@ jobs:
       - name: './configure'
         env:
           CC: ${{ matrix.cc }}
-          CXX: ${{ matrix.cxx }}
           CFLAGS: -std=c99 -Wall -Wextra -pedantic -Werror
           LDFLAGS: -Wl,--as-needed
         run: |-
@@ -89,7 +84,7 @@ jobs:
 
       - name: 'Upload "make dist" artifacts'
         if: "${{ matrix.upload }}"
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: screen-message-${{ github.sha }}-release-tarball
           path: build/screen-message-*.tar.gz
