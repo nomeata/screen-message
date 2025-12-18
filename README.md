@@ -127,7 +127,7 @@ at the beginning or the end are ignored. The input is assumed to be UTF-8  encod
 This  can  be  used to create automatic displays of changing data or similar tricks. For
 example, the following command will create a simple digital watch:
 
-    (while sleep 1; do date +%T; printf '\f'; done) | sm -k -
+    (while sleep 1; do date +%T; printf \\f; done) | sm -k -
 
 
 Contact
