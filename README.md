@@ -54,6 +54,10 @@ Options
    Text  to  display at start up. Defaults to ":-)". If "-" is passed to sm, it will
    read the text to display from the standard input, see REMOTE CONTROLLING SM.
 
+ * `-k`, `--kiosk`
+
+   Non-interactive mode, ignoring user input except for Ctrl-Q.
+
  * `-f`, `--foreground=colordesc`
 
    Define a different color to use for the foreground of the text  to  display  than
@@ -87,6 +91,17 @@ Options
 
    Aligns the text centered (`-a 0`), left (`-a 1`) or right (`-a 2`).
 
+ * `-m`, `--markup`
+
+   Interpret input text as [Pango markup](https://docs.gtk.org/Pango/pango_markup.html#pango-markup)
+   XML instead of plain text, with attributes to override styling.
+   For example:
+
+       The <big>quick <span color="#F60">brown</span> &#x1F98A;</big>
+       jumped over the <span letter_spacing="102400">lazy &#128021;</span>.
+
+   Invalid syntax will result in the unparsed prompt being shown.
+
  * `--` (Double  dash)
 
    End option parsing. This is used to be able to actually hand over
@@ -112,7 +127,7 @@ at the beginning or the end are ignored. The input is assumed to be UTF-8  encod
 This  can  be  used to create automatic displays of changing data or similar tricks. For
 example, the following command will create a simple digital watch:
 
-    (while sleep 1; do date +%T; printf '\f'; done) | sm -
+    (while sleep 1; do date +%T; printf \\f; done) | sm -k -
 
 
 Contact

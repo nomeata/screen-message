@@ -48,6 +48,9 @@ To quit the program, press Ctrl-Q, or Escape twice, or click the "Quit"-button.
 Text to display at start up. Defaults to ":-)". If "\fB\-\fR" is passed to sm,
 it will read the text to display from the standard input, see \fBREMOTE CONTROLLING SM\fR.
 .TP
+.BI \-k,\ \-\-kiosk
+Non-interactive mode, ignoring user input except for Ctrl-Q.
+.TP
 .BI \-f,\ \-\-foreground= colordesc
 Define a different color to use for the foreground of the text to
 display than black. The text string can be in any of the forms accepted
@@ -75,6 +78,22 @@ rotates the display to the left, and \-r 2 puts it upside down.
 .BI \-a,\ \-\-align= alignment
 Aligns the text centered (\-a 0), left (\-a 1) or right (\-a 2).
 .TP
+.BI \-m,\ \-\-markup
+Interpret input text as Pango markup
+XML instead of plain text, with attributes to override styling.
+The syntax is described on
+<\fIhttps://docs.gtk.org/Pango/pango_markup.html\fR>.
+For example:
+
+.in +4
+.nf
+The <big>quick <span color="#F60">brown</span> &#x1F98A;</big>
+jumped over the <span letter_spacing="102400">lazy &#128021;</span>.
+.fi
+.in
+
+Invalid syntax will result in the unparsed prompt being shown.
+.TP
 .BI \-\-
 (Double dash) End option parsing. This is used to be able to actually hand over text
 that starts of with an dash.
@@ -96,7 +115,11 @@ once. Newline characters at the beginning or the end are ignored. The input is a
 .PP
 This can be used to create automatic displays of changing data or similar tricks. For example, the following command will create a simple digital watch:
 .sp
-.B (while sleep 1; do date +%T; printf \\\\\\\\f; done) | sm -
+.in +4
+.nf
+(while sleep 1; do date +%T; printf \\\\f; done) | sm \-k \-
+.fi
+.in
 
 
 .SH AUTHOR
