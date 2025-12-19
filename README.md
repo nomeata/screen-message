@@ -3,8 +3,12 @@ screen-message
 
 If you just want to display a word or a short, possibly multi-line, text as
 large and as quickly as possible on your screen, then `screen-message` is the
-right too for you. It has been used already twice at a Debian conference for
+right tool for you. It has been used already twice at a Debian conference for
 the Mugshots.
+
+![In use at fsmi](demo/fsmi-ka.jpg)
+![Large, friendly letters](demo/panic.jpg)
+![Happy message, sad message](demo/messages.jpg)
 
 `screen-message` runs on Linux and Windows and there is an online version on
 http://sm.nomeata.de/ (with sources in the `docs/` folder of this project)
